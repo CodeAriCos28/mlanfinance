@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Módulo de Gastos - AgroSystem</title>
+    <title>Módulo de Servicios - AgroSystem</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Boxicons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
- <style>
+    <style>
+        /* ESTILOS BASE - COPIADOS DE gastos.html */
         * {
             margin: 0;
             padding: 0;
@@ -375,8 +376,8 @@
             margin-bottom: 30px;
         }
 
-        .card-balance{
-            background: rgba(33, 150, 243, 0.12);
+        .card {
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
             padding: 25px;
             border-radius: 16px;
@@ -387,31 +388,7 @@
             position: relative;
             overflow: hidden;
         }
-        .card-spent  {
-            background: rgba(252, 48, 48, 0.195);
-            backdrop-filter: blur(20px);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
-            border: 1px solid rgba(66, 165, 245, 0.2);
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .card-available{
-            background:rgba(59, 253, 45, 0.101) ;
-            backdrop-filter: blur(20px);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
-            border: 1px solid rgba(66, 165, 245, 0.2);
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-       
+
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 12px 30px rgba(33, 150, 243, 0.18);
@@ -436,15 +413,15 @@
             opacity: 0.15;
         }
 
-        .card-available::before {
+        .card-total::before {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234caf50'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
         }
 
-        .card-spent::before {
+        .card-highest::before {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f44336'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
         }
 
-        .card-balance::before {
+        .card-count::before {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232196f3'%3E%3Cpath d='M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z'/%3E%3C/svg%3E");
         }
 
@@ -456,7 +433,7 @@
             z-index: 2;
         }
 
-        .card-available .card-icon {
+        .card-total .card-icon {
             color: #4caf50;
             background: rgba(33, 150, 243, 0.12);
             background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.2) 100%);
@@ -470,7 +447,7 @@
             box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
         }
 
-        .card-spent .card-icon {
+        .card-highest .card-icon {
             color: #f44336;
             background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(244, 67, 54, 0.2) 100%);
             width: 60px;
@@ -483,7 +460,7 @@
             box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
         }
 
-        .card-balance .card-icon {
+        .card-count .card-icon {
             color: #2196f3;
             background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(33, 150, 243, 0.2) 100%);
             width: 60px;
@@ -748,7 +725,7 @@
             display: inline-block;
         }
 
-        .badge-category {
+        .badge-service {
             background: linear-gradient(135deg, rgba(255, 183, 77, 0.2) 0%, rgba(255, 138, 101, 0.2) 100%);
             color: #f57c00;
             border: 1px solid #ffb74d;
@@ -1380,12 +1357,12 @@
                 <i class='fas fa-exchange-alt'></i>
                 <span>Conversiones</span>
             </a>
-            <a href="gastos.html" class="menu-item active">
+            <a href="gastos.html" class="menu-item">
                 <i class='fas fa-wallet'></i>
                 <span> Gestion Gastos</span>
             </a>
-            <a href="pagos.html" class="menu-item">
-                <i class='fas fa-credit-card'></i>
+            <a href="servicios.html" class="menu-item active">
+                <i class='fas fa-file-invoice-dollar'></i>
                 <span>Pago Servicios</span>
             </a>
             <a href="dashboard.html" class="menu-item">
@@ -1413,10 +1390,10 @@
                 <div class="page-header-top">
                     <div>
                         <h1>
-                            <i class="fas fa-wallet"></i>
-                            Gestión de Gastos
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            Pago de Servicios
                         </h1>
-                        <p class="page-subtitle">Controla y visualiza todos los gastos registrados</p>
+                        <p class="page-subtitle">Registro y control de pagos de servicios realizados</p>
                     </div>
                     <div class="header-actions">
                         <div class="tooltip">
@@ -1436,20 +1413,20 @@
                 
                 <!-- DASHBOARD CARDS -->
                 <div class="dashboard-cards">
-                    <div class="card card-available">
-                        <i class="fas fa-wallet card-icon"></i>
-                        <div class="card-title">Total Disponible</div>
-                        <div class="card-value">RD$ 125,430.00</div>
+                    <div class="card card-total">
+                        <i class="fas fa-receipt card-icon"></i>
+                        <div class="card-title">Total Pagado (Mes)</div>
+                        <div class="card-value">RD$ 35,420.00</div>
                     </div>
-                    <div class="card card-spent">
-                        <i class="fas fa-credit-card card-icon"></i>
-                        <div class="card-title">Total Gastado</div>
-                        <div class="card-value">RD$ 45,670.50</div>
+                    <div class="card card-highest">
+                        <i class="fas fa-chart-bar card-icon"></i>
+                        <div class="card-title">Servicio con Mayor Monto</div>
+                        <div class="card-value">RD$ 12,500.00</div>
                     </div>
-                    <div class="card card-balance">
-                        <i class="fas fa-chart-line card-icon"></i>
-                        <div class="card-title">Balance Restante</div>
-                        <div class="card-value">RD$ 79,759.50</div>
+                    <div class="card card-count">
+                        <i class="fas fa-list-alt card-icon"></i>
+                        <div class="card-title">Servicios Pagados</div>
+                        <div class="card-value">8</div>
                     </div>
                 </div>
             </div>
@@ -1476,18 +1453,31 @@
                         <input type="date" id="dateTo" name="dateTo">
                     </div>
                     <div class="form-group">
-                        <label for="categoryFilter">
+                        <label for="serviceFilter">
                             <i class="fas fa-tags"></i>
-                            Categoría
+                            Tipo de Servicio
                         </label>
-                        <select id="categoryFilter" name="categoryFilter">
-                            <option value="">Todas las categorías</option>
-                            <option value="alimentacion">Alimentación</option>
-                            <option value="transporte">Transporte</option>
-                            <option value="servicios">Servicios</option>
-                            <option value="equipos">Equipos</option>
-                            <option value="oficina">Oficina</option>
+                        <select id="serviceFilter" name="serviceFilter">
+                            <option value="">Todos los servicios</option>
+                            <option value="agua">Agua</option>
+                            <option value="luz">Luz</option>
+                            <option value="internet">Internet</option>
+                            <option value="mantenimiento">Mantenimiento</option>
+                            <option value="telefonia">Telefonía</option>
                             <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="registrarFilter">
+                            <i class="fas fa-user"></i>
+                            Registrado Por
+                        </label>
+                        <select id="registrarFilter" name="registrarFilter">
+                            <option value="">Todos los registradores</option>
+                            <option value="Carmen García">Carmen García</option>
+                            <option value="Juan Pérez">Juan Pérez</option>
+                            <option value="María Rodríguez">María Rodríguez</option>
+                            <option value="Carlos López">Carlos López</option>
                         </select>
                     </div>
                     <div class="filters-actions">
@@ -1509,7 +1499,7 @@
                     <div class="controls-right">
                         <button class="btn-add" id="btnAdd">
                             <i class="fas fa-plus"></i>
-                            <span>Agregar</span>
+                            <span>Agregar Pago</span>
                         </button>
                     </div>
                 </div>
@@ -1517,19 +1507,20 @@
                 <div id="emptyState" style="display: none;">
                     <div class="empty-state">
                         <i class="fas fa-inbox"></i>
-                        <h3>Sin gastos registrados</h3>
-                        <p>Comienza agregando tu primer gasto</p>
+                        <h3>Sin pagos registrados</h3>
+                        <p>Comienza agregando tu primer pago de servicio</p>
                     </div>
                 </div>
 
-                <table id="expensesTable" style="display: none;">
+                <table id="servicesTable" style="display: none;">
                     <thead>
                         <tr>
-                            <th>Fecha</th>
-                            <th>Descripción</th>
+                            <th>Fecha del Pago</th>
+                            <th>Servicio</th>
                             <th>Monto</th>
-                            <th>Categoría</th>
+                            <th>Método</th>
                             <th>Registrado Por</th>
+                            <th>Notas</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -1541,26 +1532,39 @@
         </div>
     </div>
 
-    <!-- MODAL PARA CREAR/EDITAR GASTO -->
+    <!-- MODAL PARA CREAR/EDITAR PAGO DE SERVICIO -->
     <div class="modal" id="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">
-                    <i class="fas fa-plus-circle"></i> Nuevo Gasto
+                    <i class="fas fa-plus-circle"></i> Registrar Pago de Servicio
                 </h2>
                 <button class="btn-close" id="btnClose">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
-            <form id="expenseForm">
+            <form id="serviceForm">
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="date">
                             <i class="fas fa-calendar-alt"></i>
-                            Fecha del Gasto <span class="required">*</span>
+                            Fecha del Pago <span class="required">*</span>
                         </label>
                         <input type="date" id="date" name="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceType">Tipo de Servicio <span class="required">*</span></label>
+                        <select id="serviceType" name="serviceType" required>
+                            <option value="">Selecciona un servicio</option>
+                            <option value="agua">Agua</option>
+                            <option value="luz">Luz</option>
+                            <option value="internet">Internet</option>
+                            <option value="mantenimiento">Mantenimiento</option>
+                            <option value="telefonia">Telefonía</option>
+                            <option value="otros">Otros</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -1569,15 +1573,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="category">Categoría <span class="required">*</span></label>
-                        <select id="category" name="category" required>
-                            <option value="">Selecciona una categoría</option>
-                            <option value="alimentacion">Alimentación</option>
-                            <option value="transporte">Transporte</option>
-                            <option value="servicios">Servicios</option>
-                            <option value="equipos">Equipos</option>
-                            <option value="oficina">Oficina</option>
-                            <option value="otros">Otros</option>
+                        <label for="paymentMethod">Método de Pago</label>
+                        <select id="paymentMethod" name="paymentMethod">
+                            <option value="efectivo">Efectivo</option>
+                            <option value="transferencia">Transferencia</option>
+                            <option value="tarjeta">Tarjeta</option>
+                            <option value="cheque">Cheque</option>
                         </select>
                     </div>
 
@@ -1587,20 +1588,26 @@
                     </div>
 
                     <div class="form-group full">
-                        <label for="description">
+                        <label for="notes">
                             <i class="fas fa-align-left"></i>
-                            Descripción Detallada <span class="required">*</span>
+                            Notas / Descripción
                         </label>
-                        <textarea id="description" name="description" placeholder="Describe detalladamente el gasto realizado..." required></textarea>
+                        <textarea id="notes" name="notes" placeholder="Detalles adicionales sobre el pago..."></textarea>
                     </div>
 
-
+                    <div class="form-group full">
+                        <label for="receipt">
+                            <i class="fas fa-file-upload"></i>
+                            Comprobante (Opcional)
+                        </label>
+                        <input type="file" id="receipt" name="receipt" accept="image/*,.pdf">
+                    </div>
                 </div>
 
                 <div class="modal-actions">
                     <button type="submit" class="btn-submit">
                         <i class="fas fa-check-circle"></i>
-                        <span>Guardar Gasto</span>
+                        <span>Guardar Pago</span>
                     </button>
                     <button type="button" class="btn-cancel" id="btnCancel">
                         <i class="fas fa-times-circle"></i>
@@ -1611,77 +1618,78 @@
         </div>
     </div>
 
-    <!-- MODAL PARA DESCRIPCIÓN COMPLETA -->
-    <div class="description-modal" id="descriptionModal">
+    <!-- MODAL PARA NOTAS COMPLETAS -->
+    <div class="description-modal" id="notesModal">
         <div class="description-modal-content">
             <div class="description-modal-header">
-                <h3>Descripción Completa</h3>
-                <button class="description-modal-close" id="descriptionModalClose">
+                <h3>Notas Completas</h3>
+                <button class="description-modal-close" id="notesModalClose">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="description-modal-body" id="descriptionModalBody">
-                <!-- El contenido de la descripción se cargará aquí -->
+            <div class="description-modal-body" id="notesModalBody">
+                <!-- El contenido de las notas se cargará aquí -->
             </div>
         </div>
     </div>
 
     <script>
 // Datos de ejemplo para demostración
-let expenses = [
+let services = [
     {
         id: 1,
         date: '2023-10-15',
-        description: 'Compra de materiales de oficina',
+        serviceType: 'luz',
         amount: 12500.00,
-        category: 'oficina',
+        paymentMethod: 'transferencia',
         registrar: 'Carmen García',
-     
+        notes: 'Pago de factura mensual de energía eléctrica'
     },
     {
         id: 2,
         date: '2023-10-18',
-        description: 'Pago de servicios eléctricos',
+        serviceType: 'agua',
         amount: 8500.75,
-        category: 'servicios',
+        paymentMethod: 'efectivo',
         registrar: 'Juan Pérez',
-    
+        notes: 'Pago de servicio de agua potable'
     },
     {
         id: 3,
         date: '2023-10-20',
-        description: 'Combustible para vehículos',
+        serviceType: 'internet',
         amount: 7200.50,
-        category: 'transporte',
+        paymentMethod: 'tarjeta',
         registrar: 'María Rodríguez',
-       
+        notes: 'Pago mensual de servicio de internet corporativo'
     },
     {
         id: 4,
         date: '2023-10-22',
-        description: 'Almuerzo de equipo',
+        serviceType: 'mantenimiento',
         amount: 4500.00,
-        category: 'alimentacion',
+        paymentMethod: 'cheque',
         registrar: 'Carlos López',
-    
+        notes: 'Mantenimiento preventivo de equipos de oficina'
     },
     {
         id: 5,
         date: '2023-10-25',
-        description: 'Compra de computadora',
-        amount: 32500.00,
-        category: 'equipos',
+        serviceType: 'telefonia',
+        amount: 3250.00,
+        paymentMethod: 'transferencia',
         registrar: 'Ana Martínez',
+        notes: 'Pago de servicio de telefonía fija'
     }
 ];
 
 let editingIndex = null;
-let filteredExpenses = [...expenses];
+let filteredServices = [...services];
 
-// Ordenar los gastos por fecha (más recientes primero)
-function sortExpenses() {
-    expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
-    filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+// Ordenar los servicios por fecha (más recientes primero)
+function sortServices() {
+    services.sort((a, b) => new Date(b.date) - new Date(a.date));
+    filteredServices.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
 // Elementos del DOM
@@ -1694,19 +1702,20 @@ const btnPrintAll = document.getElementById('btnPrintAll');
 const btnPdfAll = document.getElementById('btnPdfAll');
 const btnApplyFilters = document.getElementById('btnApplyFilters');
 const btnClearFilters = document.getElementById('btnClearFilters');
-const form = document.getElementById('expenseForm');
+const form = document.getElementById('serviceForm');
 const tableBody = document.getElementById('tableBody');
 const emptyState = document.getElementById('emptyState');
 const dateFrom = document.getElementById('dateFrom');
 const dateTo = document.getElementById('dateTo');
-const categoryFilter = document.getElementById('categoryFilter');
+const serviceFilter = document.getElementById('serviceFilter');
+const registrarFilter = document.getElementById('registrarFilter');
 const menuToggle = document.getElementById('menuToggle');
 const sidebarLeft = document.getElementById('sidebarLeft');
 const sidebarOverlay = document.getElementById('sidebarOverlay');
 const mainContent = document.getElementById('mainContent');
-const descriptionModal = document.getElementById('descriptionModal');
-const descriptionModalClose = document.getElementById('descriptionModalClose');
-const descriptionModalBody = document.getElementById('descriptionModalBody');
+const notesModal = document.getElementById('notesModal');
+const notesModalClose = document.getElementById('notesModalClose');
+const notesModalBody = document.getElementById('notesModalBody');
 
 // Función para mostrar/ocultar sidebar
 function toggleSidebar() {
@@ -1715,7 +1724,7 @@ function toggleSidebar() {
     mainContent.classList.toggle('expanded');
 }
 
-// Inicializar módulos - CORREGIDO
+// Inicializar módulos
 function initializeModules() {
     const menuItems = document.querySelectorAll('.menu-item');
     
@@ -1725,18 +1734,15 @@ function initializeModules() {
             if (window.innerWidth <= 992) {
                 toggleSidebar();
             }
-            
-            // NO prevenir el comportamiento por defecto
-            // Los enlaces funcionarán normalmente
         });
     });
 }
 
-// Abrir modal para nuevo gasto
+// Abrir modal para nuevo servicio
 btnAdd.addEventListener('click', () => {
     console.log('Botón agregar clickeado');
     editingIndex = null;
-    modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Nuevo Gasto';
+    modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Registrar Pago de Servicio';
     form.reset();
     
     // Establecer fecha actual
@@ -1763,22 +1769,23 @@ modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
 });
 
-// Guardar gasto - CORREGIDO
+// Guardar servicio
 form.addEventListener('submit', function(e) {
     e.preventDefault();
     console.log('Formulario enviado');
     
     // Obtener valores del formulario
     const date = document.getElementById('date').value;
-    const description = document.getElementById('description').value.trim();
+    const serviceType = document.getElementById('serviceType').value;
     const amount = parseFloat(document.getElementById('amount').value);
-    const category = document.getElementById('category').value;
+    const paymentMethod = document.getElementById('paymentMethod').value;
     const registrar = document.getElementById('registrar').value.trim();
+    const notes = document.getElementById('notes').value.trim();
     
-    console.log('Datos del formulario:', { date, description, amount, category, registrar });
+    console.log('Datos del formulario:', { date, serviceType, amount, paymentMethod, registrar, notes });
     
     // Validar formulario
-    if (!date || !description || !amount || !category || !registrar) {
+    if (!date || !serviceType || !amount || !registrar) {
         alert('Por favor complete todos los campos obligatorios');
         return;
     }
@@ -1789,28 +1796,29 @@ form.addEventListener('submit', function(e) {
     }
     
     const formData = {
-        id: editingIndex !== null ? expenses[editingIndex].id : expenses.length + 1,
+        id: editingIndex !== null ? services[editingIndex].id : services.length + 1,
         date: date,
-        description: description,
+        serviceType: serviceType,
         amount: amount,
-        category: category,
+        paymentMethod: paymentMethod,
         registrar: registrar,
+        notes: notes
     };
 
     console.log('Datos a guardar:', formData);
 
     if (editingIndex !== null) {
-        // Editar gasto existente
-        expenses[editingIndex] = formData;
-        console.log('Gasto editado:', editingIndex);
+        // Editar servicio existente
+        services[editingIndex] = formData;
+        console.log('Servicio editado:', editingIndex);
     } else {
-        // Agregar nuevo gasto
-        expenses.push(formData);
-        console.log('Nuevo gasto agregado. Total gastos:', expenses.length);
+        // Agregar nuevo servicio
+        services.push(formData);
+        console.log('Nuevo servicio agregado. Total servicios:', services.length);
     }
 
-    // Ordenar los gastos por fecha (más recientes primero)
-    sortExpenses();
+    // Ordenar los servicios por fecha (más recientes primero)
+    sortServices();
     
     applyFilters();
     closeModal();
@@ -1818,69 +1826,70 @@ form.addEventListener('submit', function(e) {
 
 // Función para truncar texto y agregar botón de ver más/menos
 function truncateText(text, maxLength) {
-    if (text.length <= maxLength) return text;
+    if (!text || text.length <= maxLength) return text;
     
     const truncated = text.substring(0, maxLength);
     
     return `
         <span class="description-container">
             <span class="truncated-text">${truncated}</span>
-            <button class="read-more-btn" onclick="showFullDescription('${text.replace(/'/g, "\\'")}')">... más</button>
+            <button class="read-more-btn" onclick="showFullNotes('${text.replace(/'/g, "\\'")}')">... más</button>
         </span>
     `;
 }
 
-// Función para mostrar la descripción completa en un modal
-function showFullDescription(text) {
-    descriptionModalBody.textContent = text;
-    descriptionModal.classList.add('active');
+// Función para mostrar las notas completas en un modal
+function showFullNotes(text) {
+    notesModalBody.textContent = text;
+    notesModal.classList.add('active');
 }
 
-// Cerrar modal de descripción
-descriptionModalClose.addEventListener('click', () => {
-    descriptionModal.classList.remove('active');
+// Cerrar modal de notas
+notesModalClose.addEventListener('click', () => {
+    notesModal.classList.remove('active');
 });
 
-descriptionModal.addEventListener('click', (e) => {
-    if (e.target === descriptionModal) {
-        descriptionModal.classList.remove('active');
+notesModal.addEventListener('click', (e) => {
+    if (e.target === notesModal) {
+        notesModal.classList.remove('active');
     }
 });
 
 // Renderizar tabla
 function renderTable() {
-    console.log('Renderizando tabla con', filteredExpenses.length, 'gastos');
+    console.log('Renderizando tabla con', filteredServices.length, 'servicios');
     tableBody.innerHTML = '';
 
-    if (filteredExpenses.length === 0) {
-        document.getElementById('expensesTable').style.display = 'none';
+    if (filteredServices.length === 0) {
+        document.getElementById('servicesTable').style.display = 'none';
         emptyState.style.display = 'block';
         return;
     }
 
-    document.getElementById('expensesTable').style.display = 'table';
+    document.getElementById('servicesTable').style.display = 'table';
     emptyState.style.display = 'none';
 
-    filteredExpenses.forEach((expense, index) => {
-        const actualIndex = expenses.findIndex(e => e.id === expense.id);
+    filteredServices.forEach((service, index) => {
+        const actualIndex = services.findIndex(s => s.id === service.id);
         const row = document.createElement('tr');
         
-        // Formatear categoría para mostrar
-        const categoryLabels = {
-            'alimentacion': 'Alimentación',
-            'transporte': 'Transporte',
-            'servicios': 'Servicios',
-            'equipos': 'Equipos',
-            'oficina': 'Oficina',
+        // Formatear servicio para mostrar
+        const serviceLabels = {
+            'agua': 'Agua',
+            'luz': 'Luz',
+            'internet': 'Internet',
+            'mantenimiento': 'Mantenimiento',
+            'telefonia': 'Telefonía',
             'otros': 'Otros'
         };
         
         row.innerHTML = `
-            <td>${new Date(expense.date).toLocaleDateString('es-DO')}</td>
-            <td>${truncateText(expense.description, 20)}</td>
-            <td>RD$ ${expense.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
-            <td><span class="badge badge-category">${categoryLabels[expense.category] || expense.category}</span></td>
-            <td>${expense.registrar}</td>
+            <td>${new Date(service.date).toLocaleDateString('es-DO')}</td>
+            <td><span class="badge badge-service">${serviceLabels[service.serviceType] || service.serviceType}</span></td>
+            <td>RD$ ${service.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+            <td>${service.paymentMethod}</td>
+            <td>${service.registrar}</td>
+            <td>${truncateText(service.notes, 20)}</td>
             <td>
                 <div class="actions">
                     <div class="tooltip">
@@ -1890,13 +1899,13 @@ function renderTable() {
                         <span class="tooltiptext">Descargar PDF</span>
                     </div>
                     <div class="tooltip">
-                        <button class="btn-action btn-edit" onclick="editExpense(${actualIndex})">
+                        <button class="btn-action btn-edit" onclick="editService(${actualIndex})">
                             <i class="fas fa-edit"></i>
                         </button>
                         <span class="tooltiptext">Editar</span>
                     </div>
                     <div class="tooltip">
-                        <button class="btn-action btn-delete" onclick="deleteExpense(${actualIndex})">
+                        <button class="btn-action btn-delete" onclick="deleteService(${actualIndex})">
                             <i class="fas fa-trash"></i>
                         </button>
                         <span class="tooltiptext">Eliminar</span>
@@ -1908,39 +1917,49 @@ function renderTable() {
     });
 }
 
-// Editar gasto
-window.editExpense = function(index) {
-    console.log('Editando gasto:', index);
+// Editar servicio
+window.editService = function(index) {
+    console.log('Editando servicio:', index);
     editingIndex = index;
-    const expense = expenses[index];
+    const service = services[index];
     
-    modalTitle.innerHTML = '<i class="fas fa-edit"></i> Editar Gasto';
-    document.getElementById('date').value = expense.date;
-    document.getElementById('description').value = expense.description;
-    document.getElementById('amount').value = expense.amount;
-    document.getElementById('category').value = expense.category;
-    document.getElementById('registrar').value = expense.registrar;
+    modalTitle.innerHTML = '<i class="fas fa-edit"></i> Editar Pago de Servicio';
+    document.getElementById('date').value = service.date;
+    document.getElementById('serviceType').value = service.serviceType;
+    document.getElementById('amount').value = service.amount;
+    document.getElementById('paymentMethod').value = service.paymentMethod;
+    document.getElementById('registrar').value = service.registrar;
+    document.getElementById('notes').value = service.notes;
     modal.classList.add('active');
 };
 
-// Eliminar gasto
-window.deleteExpense = function(index) {
-    if (confirm('¿Estás seguro de que deseas eliminar este gasto?')) {
-        console.log('Eliminando gasto:', index);
-        expenses.splice(index, 1);
+// Eliminar servicio
+window.deleteService = function(index) {
+    if (confirm('¿Estás seguro de que deseas eliminar este pago de servicio?')) {
+        console.log('Eliminando servicio:', index);
+        services.splice(index, 1);
         applyFilters();
     }
 };
 
 // Descargar PDF individual
 window.downloadPDF = function(index) {
-    const expense = expenses[index];
+    const service = services[index];
+    const serviceLabels = {
+        'agua': 'Agua',
+        'luz': 'Luz',
+        'internet': 'Internet',
+        'mantenimiento': 'Mantenimiento',
+        'telefonia': 'Telefonía',
+        'otros': 'Otros'
+    };
+    
     const doc = `
         <!DOCTYPE html>
         <html lang="es">
         <head>
             <meta charset="UTF-8">
-            <title>Gasto ${expense.date}</title>
+            <title>Pago de Servicio ${service.date}</title>
             <style>
                 body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
                 .header { text-align: center; margin-bottom: 30px; }
@@ -1953,29 +1972,33 @@ window.downloadPDF = function(index) {
         </head>
         <body>
             <div class="header">
-                <h1>Registro de Gasto</h1>
-                <p>Fecha: ${new Date(expense.date).toLocaleDateString('es-DO')}</p>
+                <h1>Registro de Pago de Servicio</h1>
+                <p>Fecha: ${new Date(service.date).toLocaleDateString('es-DO')}</p>
             </div>
             <div class="content">
                 <div class="row">
                     <span class="label">Fecha:</span>
-                    <span class="value">${new Date(expense.date).toLocaleDateString('es-DO')}</span>
+                    <span class="value">${new Date(service.date).toLocaleDateString('es-DO')}</span>
                 </div>
                 <div class="row">
-                    <span class="label">Descripción:</span>
-                    <span class="value">${expense.description}</span>
+                    <span class="label">Servicio:</span>
+                    <span class="value">${serviceLabels[service.serviceType] || service.serviceType}</span>
                 </div>
                 <div class="row">
                     <span class="label">Monto:</span>
-                    <span class="value">RD$ ${expense.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</span>
+                    <span class="value">RD$ ${service.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</span>
                 </div>
                 <div class="row">
-                    <span class="label">Categoría:</span>
-                    <span class="value">${expense.category}</span>
+                    <span class="label">Método de Pago:</span>
+                    <span class="value">${service.paymentMethod}</span>
                 </div>
                 <div class="row">
                     <span class="label">Registrado por:</span>
-                    <span class="value">${expense.registrar}</span>
+                    <span class="value">${service.registrar}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Notas:</span>
+                    <span class="value">${service.notes || 'N/A'}</span>
                 </div>
             </div>
         </body>
@@ -1985,7 +2008,7 @@ window.downloadPDF = function(index) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Gasto_${expense.date}.pdf`;
+    link.download = `Pago_Servicio_${service.date}.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -1997,15 +2020,19 @@ function applyFilters() {
     console.log('Aplicando filtros');
     const dateFromValue = dateFrom.value;
     const dateToValue = dateTo.value;
-    const categoryValue = categoryFilter.value;
+    const serviceValue = serviceFilter.value;
+    const registrarValue = registrarFilter.value;
     
-    filteredExpenses = expenses.filter(expense => {
+    filteredServices = services.filter(service => {
         // Filtrar por fecha
-        if (dateFromValue && expense.date < dateFromValue) return false;
-        if (dateToValue && expense.date > dateToValue) return false;
+        if (dateFromValue && service.date < dateFromValue) return false;
+        if (dateToValue && service.date > dateToValue) return false;
         
-        // Filtrar por categoría
-        if (categoryValue && expense.category !== categoryValue) return false;
+        // Filtrar por servicio
+        if (serviceValue && service.serviceType !== serviceValue) return false;
+        
+        // Filtrar por registrador
+        if (registrarValue && service.registrar !== registrarValue) return false;
         
         return true;
     });
@@ -2019,15 +2046,16 @@ btnApplyFilters.addEventListener('click', applyFilters);
 btnClearFilters.addEventListener('click', () => {
     dateFrom.value = '';
     dateTo.value = '';
-    categoryFilter.value = '';
-    filteredExpenses = [...expenses];
+    serviceFilter.value = '';
+    registrarFilter.value = '';
+    filteredServices = [...services];
     renderTable();
 });
 
 // Imprimir todo
 btnPrintAll.addEventListener('click', () => {
-    if (filteredExpenses.length === 0) {
-        alert('No hay gastos para imprimir');
+    if (filteredServices.length === 0) {
+        alert('No hay pagos de servicios para imprimir');
         return;
     }
     printFullHistory();
@@ -2035,14 +2063,23 @@ btnPrintAll.addEventListener('click', () => {
 
 // Descargar PDF de todo
 btnPdfAll.addEventListener('click', () => {
-    if (filteredExpenses.length === 0) {
-        alert('No hay gastos para descargar');
+    if (filteredServices.length === 0) {
+        alert('No hay pagos de servicios para descargar');
         return;
     }
     downloadFullHistoryPDF();
 });
 
 function printFullHistory() {
+    const serviceLabels = {
+        'agua': 'Agua',
+        'luz': 'Luz',
+        'internet': 'Internet',
+        'mantenimiento': 'Mantenimiento',
+        'telefonia': 'Telefonía',
+        'otros': 'Otros'
+    };
+    
     let tableHTML = `
         <html><head>
         <style>
@@ -2055,28 +2092,30 @@ function printFullHistory() {
             .total { margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; text-align: right; font-weight: bold; }
         </style>
         </head><body>
-        <h1>Historial Completo de Gastos</h1>
+        <h1>Historial Completo de Pagos de Servicios</h1>
         <p>Fecha de impresión: ${new Date().toLocaleDateString('es-DO')}</p>
         <table>
         <tr>
             <th>Fecha</th>
-            <th>Descripción</th>
+            <th>Servicio</th>
             <th>Monto</th>
-            <th>Categoría</th>
+            <th>Método</th>
             <th>Registrado Por</th>
+            <th>Notas</th>
         </tr>
     `;
     
     let total = 0;
-    filteredExpenses.forEach(expense => {
-        total += expense.amount;
+    filteredServices.forEach(service => {
+        total += service.amount;
         tableHTML += `
         <tr>
-            <td>${new Date(expense.date).toLocaleDateString('es-DO')}</td>
-            <td>${expense.description}</td>
-            <td>RD$ ${expense.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
-            <td>${expense.category}</td>
-            <td>${expense.registrar}</td>
+            <td>${new Date(service.date).toLocaleDateString('es-DO')}</td>
+            <td>${serviceLabels[service.serviceType] || service.serviceType}</td>
+            <td>RD$ ${service.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+            <td>${service.paymentMethod}</td>
+            <td>${service.registrar}</td>
+            <td>${service.notes || 'N/A'}</td>
         </tr>
         `;
     });
@@ -2092,12 +2131,21 @@ function printFullHistory() {
 }
 
 function downloadFullHistoryPDF() {
+    const serviceLabels = {
+        'agua': 'Agua',
+        'luz': 'Luz',
+        'internet': 'Internet',
+        'mantenimiento': 'Mantenimiento',
+        'telefonia': 'Telefonía',
+        'otros': 'Otros'
+    };
+    
     let tableHTML = `
         <!DOCTYPE html>
         <html lang="es">
         <head>
             <meta charset="UTF-8">
-            <title>Historial de Gastos</title>
+            <title>Historial de Pagos de Servicios</title>
             <style>
                 body { font-family: Arial, sans-serif; margin: 30px; color: #333; }
                 .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #2196f3; padding-bottom: 20px; }
@@ -2112,30 +2160,32 @@ function downloadFullHistoryPDF() {
         </head>
         <body>
             <div class="header">
-                <h1>Historial Completo de Gastos</h1>
+                <h1>Historial Completo de Pagos de Servicios</h1>
                 <p>Generado: ${new Date().toLocaleDateString('es-DO')} ${new Date().toLocaleTimeString('es-DO')}</p>
-                <p>Total de registros: ${filteredExpenses.length}</p>
+                <p>Total de registros: ${filteredServices.length}</p>
             </div>
             <table>
                 <tr>
                     <th>Fecha</th>
-                    <th>Descripción</th>
+                    <th>Servicio</th>
                     <th>Monto</th>
-                    <th>Categoría</th>
+                    <th>Método</th>
                     <th>Registrado Por</th>
+                    <th>Notas</th>
                 </tr>
     `;
     
     let total = 0;
-    filteredExpenses.forEach(expense => {
-        total += expense.amount;
+    filteredServices.forEach(service => {
+        total += service.amount;
         tableHTML += `
                 <tr>
-                    <td>${new Date(expense.date).toLocaleDateString('es-DO')}</td>
-                    <td>${expense.description}</td>
-                    <td>RD$ ${expense.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
-                    <td>${expense.category}</td>
-                    <td>${expense.registrar}</td>
+                    <td>${new Date(service.date).toLocaleDateString('es-DO')}</td>
+                    <td>${serviceLabels[service.serviceType] || service.serviceType}</td>
+                    <td>RD$ ${service.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+                    <td>${service.paymentMethod}</td>
+                    <td>${service.registrar}</td>
+                    <td>${service.notes || 'N/A'}</td>
                 </tr>
         `;
     });
@@ -2151,7 +2201,7 @@ function downloadFullHistoryPDF() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Historial_Gastos_${new Date().toISOString().split('T')[0]}.pdf`;
+    link.download = `Historial_Servicios_${new Date().toISOString().split('T')[0]}.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -2167,8 +2217,8 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM cargado, inicializando...');
     initializeModules();
     
-    // Ordenar los gastos por fecha (más recientes primero)
-    sortExpenses();
+    // Ordenar los servicios por fecha (más recientes primero)
+    sortServices();
     
     renderTable();
     

@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabla de Conversiones - Carmen</title>
+    <title>Dashboard Financiero - AgroSystem</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Boxicons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* Estilos base de gastos.html */
         * {
             margin: 0;
             padding: 0;
@@ -370,13 +373,13 @@
         /* DASHBOARD CARDS MEJORADAS */
         .dashboard-cards {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin-bottom: 30px;
         }
 
-        .card-total {
-            background: rgba(33, 150, 243, 0.12);
+        .card {
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
             padding: 25px;
             border-radius: 16px;
@@ -386,32 +389,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-        }
-
-        .card-usd {
-            background: rgba(252, 48, 48, 0.195);
-            backdrop-filter: blur(20px);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
-            border: 1px solid rgba(66, 165, 245, 0.2);
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-pesos {
-            background: rgba(59, 253, 45, 0.101);
-            backdrop-filter: blur(20px);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
-            border: 1px solid rgba(66, 165, 245, 0.2);
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            cursor: pointer;
         }
 
         .card:hover {
@@ -438,16 +416,20 @@
             opacity: 0.15;
         }
 
-        .card-total::before {
+        .card-income::before {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234caf50'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
         }
 
-        .card-usd::before {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f44336'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
+        .card-expenses::before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f44336'%3E%3Cpath d='M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z'/%3E%3C/svg%3E");
         }
 
-        .card-pesos::before {
+        .card-balance::before {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232196f3'%3E%3Cpath d='M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z'/%3E%3C/svg%3E");
+        }
+
+        .card-services::before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff9800'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
         }
 
         .card-icon {
@@ -458,9 +440,8 @@
             z-index: 2;
         }
 
-        .card-total .card-icon {
+        .card-income .card-icon {
             color: #4caf50;
-            background: rgba(33, 150, 243, 0.12);
             background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.2) 100%);
             width: 60px;
             height: 60px;
@@ -472,7 +453,7 @@
             box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
         }
 
-        .card-usd .card-icon {
+        .card-expenses .card-icon {
             color: #f44336;
             background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(244, 67, 54, 0.2) 100%);
             width: 60px;
@@ -485,7 +466,7 @@
             box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
         }
 
-        .card-pesos .card-icon {
+        .card-balance .card-icon {
             color: #2196f3;
             background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(33, 150, 243, 0.2) 100%);
             width: 60px;
@@ -496,6 +477,19 @@
             justify-content: center;
             margin: 0 auto 15px;
             box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+        }
+
+        .card-services .card-icon {
+            color: #ff9800;
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 152, 0, 0.2) 100%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
         }
 
         .card-title {
@@ -628,6 +622,78 @@
             box-shadow: 0 4px 12px rgba(240, 98, 146, 0.3);
         }
 
+        /* GRÁFICOS - MEJORAS RESPONSIVE */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
+            border: 1px solid rgba(66, 165, 245, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(33, 150, 243, 0.18);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #37474f;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chart-action-btn {
+            background: none;
+            border: 1px solid rgba(66, 165, 245, 0.3);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+            color: #37474f;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .chart-action-btn:hover {
+            background: rgba(66, 165, 245, 0.1);
+            border-color: #42a5f5;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            flex: 1;
+        }
+
         /* TABLA */
         .table-container {
             background: rgba(255, 255, 255, 0.98);
@@ -750,10 +816,28 @@
             display: inline-block;
         }
 
-        .badge-success {
-            background: linear-gradient(135deg, rgba(102, 187, 106, 0.2) 0%, rgba(76, 175, 80, 0.2) 100%);
+        .badge-income {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0.2) 100%);
             color: #2e7d32;
-            border: 1px solid #66bb6a;
+            border: 1px solid #4caf50;
+        }
+
+        .badge-expense {
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.2) 0%, rgba(244, 67, 54, 0.2) 100%);
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+
+        .badge-service {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.2) 0%, rgba(255, 152, 0, 0.2) 100%);
+            color: #ef6c00;
+            border: 1px solid #ff9800;
+        }
+
+        .badge-category {
+            background: linear-gradient(135deg, rgba(255, 183, 77, 0.2) 0%, rgba(255, 138, 101, 0.2) 100%);
+            color: #f57c00;
+            border: 1px solid #ffb74d;
         }
 
         .actions {
@@ -837,55 +921,6 @@
             font-size: 14px;
         }
 
-        /* Responsive image sizing for table */
-        .img-thumbnail {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid rgba(66, 165, 245, 0.3);
-        }
-
-        .img-thumbnail:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(66, 165, 245, 0.3);
-            border-color: #42a5f5;
-        }
-
-        /* Notes button icon for table rows */
-        .btn-notes {
-            background: transparent;
-            color: #ffc107;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            font-size: 18px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-notes:hover {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 179, 0, 0.2) 100%);
-            transform: scale(1.1);
-        }
-
-        .btn-notes.no-notes {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .btn-notes.no-notes:hover {
-            transform: none;
-            background: transparent;
-        }
-
         /* MODAL */
         .modal {
             display: none;
@@ -904,146 +939,6 @@
 
         .modal.active {
             display: flex;
-        }
-
-        /* MODAL IMAGEN */
-        .modal-image {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(8px);
-            z-index: 1100;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-image.active {
-            display: flex;
-        }
-
-        .modal-image-content {
-            position: relative;
-            max-width: 90%;
-            max-height: 90%;
-            animation: zoomIn 0.3s ease;
-        }
-
-        @keyframes zoomIn {
-            from {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .modal-image-content img {
-            max-width: 100%;
-            max-height: 90vh;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .btn-close-image {
-            position: absolute;
-            top: -45px;
-            right: 0;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-            color: #37474f;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn-close-image:hover {
-            background: #f06292;
-            color: white;
-            transform: rotate(90deg);
-        }
-
-        /* MODAL NOTAS */
-        .modal-notes {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 1050;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-notes.active {
-            display: flex;
-        }
-
-        .modal-notes-content {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
-            padding: 30px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 20px 60px rgba(33, 150, 243, 0.2);
-            border: 1px solid rgba(66, 165, 245, 0.2);
-            position: relative;
-            animation: slideIn 0.3s ease;
-        }
-
-        .modal-notes-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #ffc107 0%, #ff9800 100%);
-        }
-
-        .modal-notes-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-notes-header h3 {
-            font-size: 20px;
-            color: #37474f;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .notes-content {
-            background: rgba(255, 248, 225, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #ffc107;
-            color: #37474f;
-            font-size: 14px;
-            line-height: 1.6;
-            max-height: 300px;
-            overflow-y: auto;
         }
 
         .modal-content {
@@ -1122,11 +1017,6 @@
             margin-bottom: 25px;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
         .form-group.full {
             grid-column: 1 / -1;
         }
@@ -1138,7 +1028,8 @@
         input[type="text"],
         input[type="number"],
         input[type="date"],
-        textarea {
+        textarea,
+        select {
             font-size: 14px;
             padding: 12px 16px;
             border: 2px solid rgba(66, 165, 245, 0.3);
@@ -1150,7 +1041,8 @@
         }
 
         input:focus,
-        textarea:focus {
+        textarea:focus,
+        select:focus {
             outline: none;
             border-color: #42a5f5;
             box-shadow: 0 0 0 4px rgba(66, 165, 245, 0.15);
@@ -1160,31 +1052,6 @@
         textarea {
             resize: vertical;
             min-height: 100px;
-        }
-
-        .image-upload-box {
-            border: 3px dashed #42a5f5;
-            border-radius: 12px;
-            padding: 30px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, rgba(66, 165, 245, 0.08) 0%, rgba(171, 71, 188, 0.08) 100%);
-        }
-
-        .image-upload-box:hover {
-            background: linear-gradient(135deg, rgba(66, 165, 245, 0.15) 0%, rgba(171, 71, 188, 0.15) 100%);
-            border-color: #ab47bc;
-        }
-
-        .image-upload-box input[type="file"] {
-            display: none;
-        }
-
-        .upload-icon {
-            font-size: 40px;
-            color: #42a5f5;
-            margin-bottom: 10px;
         }
 
         .modal-actions {
@@ -1257,6 +1124,108 @@
 
         .sidebar-left::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* MODAL PARA DESCRIPCIÓN COMPLETA */
+        .description-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .description-modal.active {
+            display: flex;
+        }
+
+        .description-modal-content {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(66, 165, 245, 0.2);
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        .description-modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #42a5f5 0%, #ab47bc 50%, #f06292 100%);
+        }
+
+        .description-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .description-modal-header h3 {
+            font-size: 20px;
+            color: #37474f;
+            font-weight: 700;
+        }
+
+        .description-modal-body {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #37474f;
+            max-height: 50vh;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .description-modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #78909c;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .description-modal-close:hover {
+            background: rgba(240, 98, 146, 0.1);
+            color: #f06292;
+        }
+
+        .read-more-btn {
+            background: none;
+            border: none;
+            color: #42a5f5;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 4px;
+            padding: 0;
+            text-decoration: underline;
+        }
+
+        .read-more-btn:hover {
+            color: #1e88e5;
         }
 
         /* Desktop specific styles */
@@ -1334,6 +1303,35 @@
             .dashboard-cards {
                 grid-template-columns: 1fr;
                 gap: 15px;
+            }
+
+            /* MEJORAS RESPONSIVE PARA GRÁFICOS */
+            .charts-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .chart-card {
+                padding: 20px;
+            }
+
+            .chart-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .chart-title {
+                font-size: 16px;
+            }
+
+            .chart-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .chart-wrapper {
+                height: 250px;
             }
 
             .filters-panel {
@@ -1414,6 +1412,12 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .description-modal-content {
+                padding: 20px;
+                width: 95%;
+                max-height: 80vh;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1437,6 +1441,24 @@
                 font-size: 16px;
             }
 
+            /* MEJORAS ADICIONALES PARA GRÁFICOS EN MÓVILES PEQUEÑOS */
+            .chart-card {
+                padding: 15px;
+            }
+
+            .chart-title {
+                font-size: 14px;
+            }
+
+            .chart-action-btn {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+
+            .chart-wrapper {
+                height: 200px;
+            }
+
             thead th {
                 padding: 10px 6px;
                 font-size: 10px;
@@ -1445,11 +1467,6 @@
             tbody td {
                 padding: 10px 6px;
                 font-size: 11px;
-            }
-
-            .img-thumbnail {
-                width: 35px;
-                height: 35px;
             }
 
             .btn-action {
@@ -1461,6 +1478,19 @@
             .badge {
                 font-size: 10px;
                 padding: 4px 8px;
+            }
+        }
+
+        /* Configuración específica para Chart.js en móviles */
+        @media (max-width: 768px) {
+            .chart-wrapper {
+                height: 220px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chart-wrapper {
+                height: 180px !important;
             }
         }
     </style>
@@ -1492,7 +1522,7 @@
                 <i class='fas fa-home'></i>
                 <span>Inicio</span>
             </a>
-            <a href="convertidor.html" class="menu-item active">
+            <a href="convertidor.html" class="menu-item">
                 <i class='fas fa-exchange-alt'></i>
                 <span>Conversiones</span>
             </a>
@@ -1500,17 +1530,17 @@
                 <i class='fas fa-wallet'></i>
                 <span> Gestion Gastos</span>
             </a>
-            <a href="servicios.html" class="menu-item">
+            <a href="pagos.html" class="menu-item">
                 <i class='fas fa-credit-card'></i>
                 <span>Pago Servicios</span>
             </a>
-            <a href="dashboard.html" class="menu-item">
+            <a href="dashboard.html" class="menu-item active">
                 <i class='fas fa-chart-line'></i>
                 <span>Dashboard</span>
             </a>
 
             <!-- Cerrar sesión para todos -->
-            <a href="index.html" class="menu-item">
+            <a href="login.html" class="menu-item">
                 <i class='bx bx-log-out'></i>
                 <span>Cerrar Sesión</span>
             </a>
@@ -1529,12 +1559,11 @@
                 <div class="page-header-top">
                     <div>
                         <h1>
-                            <i class="fas fa-exchange-alt"></i>
-                            Registro de Conversiones
+                            <i class="fas fa-chart-line"></i>
+                            Dashboard Financiero
                         </h1>
-                        <p class="page-subtitle">Gestiona todas tus conversiones USD a RD$</p>
+                        <p class="page-subtitle">Vista completa del estado financiero y movimientos</p>
                     </div>
-                    <!-- New action buttons in header with icons and tooltips -->
                     <div class="header-actions">
                         <div class="tooltip">
                             <button class="btn-icon-action print" id="btnPrintAll" title="Imprimir Todo">
@@ -1553,20 +1582,25 @@
                 
                 <!-- DASHBOARD CARDS -->
                 <div class="dashboard-cards">
-                    <div class="card card-total">
-                        <i class="fas fa-exchange-alt card-icon"></i>
-                        <div class="card-title">Total Conversiones</div>
-                        <div class="card-value" id="totalConversions">0</div>
+                    <div class="card card-income" id="cardIncome">
+                        <i class="fas fa-arrow-up card-icon"></i>
+                        <div class="card-title">Total Entrada del Mes</div>
+                        <div class="card-value">RD$ 250,000.00</div>
                     </div>
-                    <div class="card card-usd">
-                        <i class="fas fa-dollar-sign card-icon"></i>
-                        <div class="card-title">Total USD</div>
-                        <div class="card-value" id="totalUSD">$0.00</div>
+                    <div class="card card-expenses" id="cardExpenses">
+                        <i class="fas fa-arrow-down card-icon"></i>
+                        <div class="card-title">Total Gastado del Mes</div>
+                        <div class="card-value">RD$ 125,430.00</div>
                     </div>
-                    <div class="card card-pesos">
-                        <i class="fas fa-peso-sign card-icon"></i>
-                        <div class="card-title">Total RD$</div>
-                        <div class="card-value" id="totalPesos">RD$ 0.00</div>
+                    <div class="card card-balance" id="cardBalance">
+                        <i class="fas fa-wallet card-icon"></i>
+                        <div class="card-title">Balance Disponible</div>
+                        <div class="card-value">RD$ 124,570.00</div>
+                    </div>
+                    <div class="card card-services" id="cardServices">
+                        <i class="fas fa-file-invoice card-icon"></i>
+                        <div class="card-title">Servicios Pagados</div>
+                        <div class="card-value">15</div>
                     </div>
                 </div>
             </div>
@@ -1575,7 +1609,7 @@
             <div class="filters-panel">
                 <h3 class="filters-title">
                     <i class="fas fa-filter"></i>
-                    Filtros de Búsqueda
+                    Filtros Globales
                 </h3>
                 <div class="filters-form">
                     <div class="form-group">
@@ -1593,13 +1627,43 @@
                         <input type="date" id="dateTo" name="dateTo">
                     </div>
                     <div class="form-group">
-                        <label for="representativeFilter">
-                            <i class="fas fa-user"></i>
-                            Representante
+                        <label for="typeFilter">
+                            <i class="fas fa-exchange-alt"></i>
+                            Tipo de Movimiento
                         </label>
-                        <select id="representativeFilter" name="representativeFilter">
-                            <option value="">Todos los representantes</option>
-                            <!-- Los representantes se cargarán dinámicamente -->
+                        <select id="typeFilter" name="typeFilter">
+                            <option value="">Todos los tipos</option>
+                            <option value="income">Entrada</option>
+                            <option value="expense">Gasto</option>
+                            <option value="service">Servicio</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryFilter">
+                            <i class="fas fa-tags"></i>
+                            Categoría
+                        </label>
+                        <select id="categoryFilter" name="categoryFilter">
+                            <option value="">Todas las categorías</option>
+                            <option value="alimentacion">Alimentación</option>
+                            <option value="transporte">Transporte</option>
+                            <option value="servicios">Servicios</option>
+                            <option value="equipos">Equipos</option>
+                            <option value="oficina">Oficina</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="userFilter">
+                            <i class="fas fa-user"></i>
+                            Usuario
+                        </label>
+                        <select id="userFilter" name="userFilter">
+                            <option value="">Todos los usuarios</option>
+                            <option value="carmen">Carmen García</option>
+                            <option value="juan">Juan Pérez</option>
+                            <option value="maria">María Rodríguez</option>
+                            <option value="carlos">Carlos López</option>
                         </select>
                     </div>
                     <div class="filters-actions">
@@ -1615,13 +1679,85 @@
                 </div>
             </div>
 
+            <!-- GRÁFICOS -->
+            <div class="charts-container">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-bar"></i>
+                            Gastos por Categoría
+                        </h3>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn" id="exportCategoryChart">
+                                <i class="fas fa-download"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-line"></i>
+                            Movilidad del Dinero
+                        </h3>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn" id="exportMoneyFlowChart">
+                                <i class="fas fa-download"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="moneyFlowChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-pie"></i>
+                            Distribución del Dinero
+                        </h3>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn" id="exportDistributionChart">
+                                <i class="fas fa-download"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fas fa-calendar-alt"></i>
+                            Resumen Mensual
+                        </h3>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn" id="exportMonthlyChart">
+                                <i class="fas fa-download"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
             <!-- TABLA -->
             <div class="table-container">
                 <div class="controls-bar">
+                    <h3 class="filters-title">
+                        <i class="fas fa-table"></i>
+                        Resumen de Movimientos
+                    </h3>
                     <div class="controls-right">
-                        <button class="btn-add" id="btnAdd">
-                            <i class="fas fa-plus"></i>
-                            <span>Agregar</span>
+                        <button class="btn-add" id="btnExportAll">
+                            <i class="fas fa-file-export"></i>
+                            <span>Exportar Todo</span>
                         </button>
                     </div>
                 </div>
@@ -1629,180 +1765,144 @@
                 <div id="emptyState" style="display: none;">
                     <div class="empty-state">
                         <i class="fas fa-inbox"></i>
-                        <h3>Sin conversiones aún</h3>
-                        <p>Comienza agregando tu primera conversión USD a RD$</p>
+                        <h3>Sin movimientos registrados</h3>
+                        <p>No hay movimientos que coincidan con los filtros aplicados</p>
                     </div>
                 </div>
 
-                <table id="conversionTable" style="display: none;">
+                <table id="movementsTable" style="display: none;">
                     <thead>
                         <tr>
-                            <th>Foto</th>
                             <th>Fecha</th>
-                            <th>USD</th>
-                            <th>Tasa</th>
-                            <th>RD$</th>
-                            <th>Representante</th>
-                            <th>Notas</th>
-                            <th>Estado</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Monto</th>
+                            <th>Categoría</th>
+                            <th>Responsable</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
+                        <!-- Los registros se cargarán dinámicamente aquí -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- MODAL PARA NOTAS -->
-    <div class="modal-notes" id="modalNotes">
-        <div class="modal-notes-content">
-            <div class="modal-notes-header">
-                <h3>
-                    <i class="fas fa-sticky-note"></i>
-                    Notas de la Conversión
-                </h3>
-                <button class="btn-close" id="btnCloseNotes">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="notes-content" id="notesContent"></div>
-        </div>
-    </div>
-
-    <!-- MODAL IMAGEN -->
-    <div class="modal-image" id="modalImage">
-        <div class="modal-image-content">
-            <button class="btn-close-image" id="btnCloseImage">
-                <i class="fas fa-times"></i>
-            </button>
-            <img id="enlargedImage" alt="Factura ampliada">
-        </div>
-    </div>
-
-    <!-- MODAL -->
+    <!-- MODAL PARA VER DETALLES -->
     <div class="modal" id="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">
-                    <i class="fas fa-plus-circle"></i> Nueva Conversión
+                    <i class="fas fa-eye"></i> Detalles del Movimiento
                 </h2>
                 <button class="btn-close" id="btnClose">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
-            <form id="conversionForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="date">
-                            <i class="fas fa-calendar-alt"></i>
-                            Fecha de Conversión <span class="required">*</span>
-                        </label>
-                        <input type="date" id="date" name="date" required>
-                    </div>
+            <div id="movementDetails">
+                <!-- Los detalles se cargarán dinámicamente aquí -->
+            </div>
 
-                    <div class="form-group">
-                        <label for="usd">Cantidad en USD <span class="required">*</span></label>
-                        <input type="number" id="usd" name="usd" placeholder="0.00" step="0.01" min="0" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="exchangeRate">Tasa de Cambio <span class="required">*</span></label>
-                        <input type="number" id="exchangeRate" name="exchangeRate" placeholder="58.50" step="0.01" min="0" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="pesos">Monto en Pesos (RD$)</label>
-                        <input type="text" id="pesos" name="pesos" readonly style="background: #e3f2fd; cursor: not-allowed;">
-                    </div>
-
-                    <div class="form-group full">
-                        <label for="representativeName">Nombre del Representante <span class="required">*</span></label>
-                        <input type="text" id="representativeName" name="representativeName" placeholder="Ingresa el nombre completo" required>
-                    </div>
-
-                    <div class="form-group full">
-                        <label for="imageUpload">
-                            <i class="fas fa-camera"></i>
-                            Foto de Factura <span class="required">*</span>
-                        </label>
-                        <div class="image-upload-box" id="uploadBox">
-                            <input type="file" id="imageUpload" name="image" accept=".jpg,.jpeg,.png,.gif" required>
-                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                            <div style="color: #37474f; font-weight: 600; margin-bottom: 5px;">
-                                Arrastra tu imagen aquí o haz clic para seleccionar
-                            </div>
-                            <small style="color: #8d6e63; font-size: 12px;">JPG, PNG, GIF • Máximo 5MB</small>
-                        </div>
-                        <img id="imagePreview" style="display: none; margin-top: 15px; max-width: 100%; max-height: 250px; border-radius: 12px; border: 2px solid #42a5f5;">
-                    </div>
-
-                    <div class="form-group full">
-                        <label for="notes">
-                            <i class="fas fa-sticky-note"></i>
-                            Notas Adicionales
-                        </label>
-                        <textarea id="notes" name="notes" placeholder="Agrega cualquier nota relevante sobre esta conversión..."></textarea>
-                    </div>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="submit" class="btn-submit">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Guardar</span>
-                    </button>
-                    <button type="button" class="btn-cancel" id="btnCancel">
-                        <i class="fas fa-times-circle"></i>
-                        <span>Cancelar</span>
-                    </button>
-                </div>
-            </form>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" id="btnCancel">
+                    <i class="fas fa-times-circle"></i>
+                    <span>Cerrar</span>
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
-        let conversions = [];
-        let editingIndex = null;
-        let filteredConversions = [...conversions];
+        // Datos de ejemplo para demostración
+        let movements = [
+            {
+                id: 1,
+                date: '2023-10-15',
+                type: 'income',
+                description: 'Venta de productos agrícolas',
+                amount: 75000.00,
+                category: 'ventas',
+                responsible: 'Carmen García'
+            },
+            {
+                id: 2,
+                date: '2023-10-18',
+                type: 'expense',
+                description: 'Compra de materiales de oficina',
+                amount: 12500.00,
+                category: 'oficina',
+                responsible: 'Juan Pérez'
+            },
+            {
+                id: 3,
+                date: '2023-10-20',
+                type: 'service',
+                description: 'Pago de servicios eléctricos',
+                amount: 8500.75,
+                category: 'servicios',
+                responsible: 'María Rodríguez'
+            },
+            {
+                id: 4,
+                date: '2023-10-22',
+                type: 'income',
+                description: 'Subsidio gubernamental',
+                amount: 50000.00,
+                category: 'subsidios',
+                responsible: 'Carlos López'
+            },
+            {
+                id: 5,
+                date: '2023-10-25',
+                type: 'expense',
+                description: 'Combustible para vehículos',
+                amount: 7200.50,
+                category: 'transporte',
+                responsible: 'Ana Martínez'
+            },
+            {
+                id: 6,
+                date: '2023-10-28',
+                type: 'service',
+                description: 'Mantenimiento de equipos',
+                amount: 15000.00,
+                category: 'mantenimiento',
+                responsible: 'Carmen García'
+            }
+        ];
+
+        let filteredMovements = [...movements];
+        let categoryChart, moneyFlowChart, distributionChart, monthlyChart;
 
         // Elementos del DOM
         const modal = document.getElementById('modal');
-        const modalImage = document.getElementById('modalImage');
-        const modalNotes = document.getElementById('modalNotes');
         const modalTitle = document.getElementById('modalTitle');
-        const btnAdd = document.getElementById('btnAdd');
         const btnClose = document.getElementById('btnClose');
         const btnCancel = document.getElementById('btnCancel');
-        const btnCloseImage = document.getElementById('btnCloseImage');
-        const btnCloseNotes = document.getElementById('btnCloseNotes');
         const btnPrintAll = document.getElementById('btnPrintAll');
         const btnPdfAll = document.getElementById('btnPdfAll');
-        const form = document.getElementById('conversionForm');
+        const btnApplyFilters = document.getElementById('btnApplyFilters');
+        const btnClearFilters = document.getElementById('btnClearFilters');
+        const btnExportAll = document.getElementById('btnExportAll');
         const tableBody = document.getElementById('tableBody');
         const emptyState = document.getElementById('emptyState');
-        const usdInput = document.getElementById('usd');
-        const rateInput = document.getElementById('exchangeRate');
-        const pesosInput = document.getElementById('pesos');
-        const dateInput = document.getElementById('date');
-        const imageUpload = document.getElementById('imageUpload');
-        const uploadBox = document.getElementById('uploadBox');
-        const imagePreview = document.getElementById('imagePreview');
-        const enlargedImage = document.getElementById('enlargedImage');
-        const notesContent = document.getElementById('notesContent');
+        const dateFrom = document.getElementById('dateFrom');
+        const dateTo = document.getElementById('dateTo');
+        const typeFilter = document.getElementById('typeFilter');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const userFilter = document.getElementById('userFilter');
         const menuToggle = document.getElementById('menuToggle');
         const sidebarLeft = document.getElementById('sidebarLeft');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const mainContent = document.getElementById('mainContent');
-        const dateFrom = document.getElementById('dateFrom');
-        const dateTo = document.getElementById('dateTo');
-        const representativeFilter = document.getElementById('representativeFilter');
-        const btnApplyFilters = document.getElementById('btnApplyFilters');
-        const btnClearFilters = document.getElementById('btnClearFilters');
-        const totalConversions = document.getElementById('totalConversions');
-        const totalUSD = document.getElementById('totalUSD');
-        const totalPesos = document.getElementById('totalPesos');
+        const movementDetails = document.getElementById('movementDetails');
+        const cardIncome = document.getElementById('cardIncome');
+        const cardExpenses = document.getElementById('cardExpenses');
+        const cardBalance = document.getElementById('cardBalance');
+        const cardServices = document.getElementById('cardServices');
 
         // Función para mostrar/ocultar sidebar
         function toggleSidebar() {
@@ -1817,48 +1917,33 @@
             
             menuItems.forEach(item => {
                 item.addEventListener('click', function() {
-                    // Solo cerrar menú en móviles
                     if (window.innerWidth <= 992) {
                         toggleSidebar();
                     }
                 });
             });
+
+            // Hacer las cards clickables
+            cardIncome.addEventListener('click', () => applyTypeFilter('income'));
+            cardExpenses.addEventListener('click', () => applyTypeFilter('expense'));
+            cardBalance.addEventListener('click', () => applyTypeFilter('balance'));
+            cardServices.addEventListener('click', () => applyTypeFilter('service'));
         }
 
-        // Establecer fecha actual
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        dateInput.value = `${year}-${month}-${day}`;
-
-        // Calcular conversión en tiempo real
-        function updateConversion() {
-            const usd = parseFloat(usdInput.value) || 0;
-            const rate = parseFloat(rateInput.value) || 0;
-            const pesos = (usd * rate).toFixed(2);
-            pesosInput.value = `RD$ ${parseFloat(pesos).toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+        // Filtrar por tipo al hacer clic en una card
+        function applyTypeFilter(type) {
+            if (type === 'balance') {
+                // Limpiar filtros para mostrar todo
+                typeFilter.value = '';
+            } else {
+                typeFilter.value = type;
+            }
+            applyFilters();
         }
-
-        usdInput.addEventListener('input', updateConversion);
-        rateInput.addEventListener('input', updateConversion);
-
-        // Abrir modal para nueva conversión
-        btnAdd.addEventListener('click', () => {
-            editingIndex = null;
-            modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Nueva Conversión';
-            form.reset();
-            dateInput.value = `${year}-${month}-${day}`;
-            imagePreview.style.display = 'none';
-            updateConversion();
-            modal.classList.add('active');
-        });
 
         // Cerrar modal
         function closeModal() {
             modal.classList.remove('active');
-            form.reset();
-            imagePreview.style.display = 'none';
         }
 
         btnClose.addEventListener('click', closeModal);
@@ -1868,222 +1953,62 @@
             if (e.target === modal) closeModal();
         });
 
-        // Modal de imagen
-        btnCloseImage.addEventListener('click', () => {
-            modalImage.classList.remove('active');
-        });
-
-        modalImage.addEventListener('click', (e) => {
-            if (e.target === modalImage) {
-                modalImage.classList.remove('active');
-            }
-        });
-
-        window.showImage = function(imageSrc) {
-            enlargedImage.src = imageSrc;
-            modalImage.classList.add('active');
-        };
-
-        // Modal de notas
-        btnCloseNotes.addEventListener('click', () => {
-            modalNotes.classList.remove('active');
-        });
-
-        modalNotes.addEventListener('click', (e) => {
-            if (e.target === modalNotes) {
-                modalNotes.classList.remove('active');
-            }
-        });
-
-        window.showNotes = function(notes) {
-            if (!notes || notes.trim() === '') {
-                notesContent.innerHTML = '<em style="color: #90a4ae;">No hay notas para esta conversión</em>';
-            } else {
-                notesContent.textContent = notes;
-            }
-            modalNotes.classList.add('active');
-        };
-
-        imageUpload.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    imagePreview.src = event.target.result;
-                    imagePreview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Drag and drop for image
-        uploadBox.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadBox.style.background = 'linear-gradient(135deg, rgba(66, 165, 245, 0.25) 0%, rgba(171, 71, 188, 0.25) 100%)';
-        });
-
-        uploadBox.addEventListener('dragleave', () => {
-            uploadBox.style.background = 'linear-gradient(135deg, rgba(66, 165, 245, 0.08) 0%, rgba(171, 71, 188, 0.08) 100%)';
-        });
-
-        uploadBox.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadBox.style.background = 'linear-gradient(135deg, rgba(66, 165, 245, 0.08) 0%, rgba(171, 71, 188, 0.08) 100%)';
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                imageUpload.files = files;
-                const event = new Event('change', { bubbles: true });
-                imageUpload.dispatchEvent(event);
-            }
-        });
-
-        uploadBox.addEventListener('click', () => {
-            imageUpload.click();
-        });
-
-        // Guardar conversión
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            if (!imageUpload.files[0]) {
-                alert('Por favor selecciona una imagen');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                saveConversion(event.target.result);
-            };
-            reader.readAsDataURL(imageUpload.files[0]);
-        });
-
-        function saveConversion(imageData) {
-            const formData = {
-                date: document.getElementById('date').value,
-                usd: parseFloat(usdInput.value),
-                rate: parseFloat(rateInput.value),
-                pesos: (parseFloat(usdInput.value) * parseFloat(rateInput.value)).toFixed(2),
-                representative: document.getElementById('representativeName').value.trim(),
-                image: imageUpload.files[0] ? imageUpload.files[0].name : 'factura.jpg',
-                imageData: imageData,
-                notes: document.getElementById('notes').value.trim(),
-                status: 'Completada'
-            };
-
-            if (editingIndex !== null) {
-                conversions[editingIndex] = formData;
-            } else {
-                conversions.push(formData);
-            }
-
-            // Actualizar representantes en el filtro
-            updateRepresentativesFilter();
-            
-            applyFilters();
-            closeModal();
-        }
-
-        // Actualizar filtro de representantes
-        function updateRepresentativesFilter() {
-            // Obtener representantes únicos
-            const representatives = [...new Set(conversions.map(conv => conv.representative))];
-            
-            // Limpiar opciones actuales (excepto la primera)
-            while (representativeFilter.options.length > 1) {
-                representativeFilter.remove(1);
-            }
-            
-            // Agregar representantes al filtro
-            representatives.forEach(rep => {
-                const option = document.createElement('option');
-                option.value = rep;
-                option.textContent = rep;
-                representativeFilter.appendChild(option);
-            });
-        }
-
-        // Aplicar filtros
-        function applyFilters() {
-            const dateFromValue = dateFrom.value;
-            const dateToValue = dateTo.value;
-            const representativeValue = representativeFilter.value;
-            
-            filteredConversions = conversions.filter(conv => {
-                // Filtrar por fecha
-                if (dateFromValue && conv.date < dateFromValue) return false;
-                if (dateToValue && conv.date > dateToValue) return false;
-                
-                // Filtrar por representante
-                if (representativeValue && conv.representative !== representativeValue) return false;
-                
-                return true;
-            });
-            
-            // Actualizar estadísticas
-            updateStatistics();
-            
-            renderTable();
-        }
-
-        // Actualizar estadísticas
-        function updateStatistics() {
-            const total = filteredConversions.length;
-            const totalUsd = filteredConversions.reduce((sum, conv) => sum + conv.usd, 0);
-            const totalPesosAmount = filteredConversions.reduce((sum, conv) => sum + parseFloat(conv.pesos), 0);
-            
-            totalConversions.textContent = total;
-            totalUSD.textContent = `$${totalUsd.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
-            totalPesos.textContent = `RD$ ${totalPesosAmount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
-        }
-
+        // Renderizar tabla
         function renderTable() {
             tableBody.innerHTML = '';
 
-            if (filteredConversions.length === 0) {
-                document.getElementById('conversionTable').style.display = 'none';
+            if (filteredMovements.length === 0) {
+                document.getElementById('movementsTable').style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
             }
 
-            document.getElementById('conversionTable').style.display = 'table';
+            document.getElementById('movementsTable').style.display = 'table';
             emptyState.style.display = 'none';
 
-            filteredConversions.forEach((conv, index) => {
-                const actualIndex = conversions.indexOf(conv);
+            filteredMovements.forEach((movement, index) => {
                 const row = document.createElement('tr');
+                
+                // Formatear tipo para mostrar
+                const typeLabels = {
+                    'income': { text: 'Entrada', class: 'badge-income' },
+                    'expense': { text: 'Gasto', class: 'badge-expense' },
+                    'service': { text: 'Servicio', class: 'badge-service' }
+                };
+                
+                // Formatear categoría para mostrar
+                const categoryLabels = {
+                    'alimentacion': 'Alimentación',
+                    'transporte': 'Transporte',
+                    'servicios': 'Servicios',
+                    'equipos': 'Equipos',
+                    'oficina': 'Oficina',
+                    'otros': 'Otros',
+                    'ventas': 'Ventas',
+                    'subsidios': 'Subsidios',
+                    'mantenimiento': 'Mantenimiento'
+                };
+                
                 row.innerHTML = `
-                    <td><img src="${conv.imageData}" alt="Factura" class="img-thumbnail" onclick="showImage('${conv.imageData}')"></td>
-                    <td>${new Date(conv.date).toLocaleDateString('es-DO')}</td>
-                    <td>$${conv.usd.toFixed(2)}</td>
-                    <td>${conv.rate.toFixed(2)}</td>
-                    <td>RD$ ${parseFloat(conv.pesos).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
-                    <td>${conv.representative}</td>
-                    <td>
-                        <button class="btn-notes ${!conv.notes ? 'no-notes' : ''}" 
-                                onclick="showNotes('${conv.notes.replace(/'/g, "\\'")}')">
-                            <i class="fas fa-sticky-note"></i>
-                        </button>
-                    </td>
-                    <td><span class="badge badge-success">${conv.status}</span></td>
+                    <td>${new Date(movement.date).toLocaleDateString('es-DO')}</td>
+                    <td><span class="badge ${typeLabels[movement.type].class}">${typeLabels[movement.type].text}</span></td>
+                    <td>${movement.description}</td>
+                    <td>RD$ ${movement.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+                    <td><span class="badge badge-category">${categoryLabels[movement.category] || movement.category}</span></td>
+                    <td>${movement.responsible}</td>
                     <td>
                         <div class="actions">
                             <div class="tooltip">
-                                <button class="btn-action btn-download" onclick="downloadPDF(${actualIndex})">
+                                <button class="btn-action btn-download" onclick="downloadPDF(${index})">
                                     <i class="fas fa-download"></i>
                                 </button>
                                 <span class="tooltiptext">Descargar PDF</span>
                             </div>
                             <div class="tooltip">
-                                <button class="btn-action btn-edit" onclick="editConversion(${actualIndex})">
-                                    <i class="fas fa-edit"></i>
+                                <button class="btn-action btn-edit" onclick="viewDetails(${index})">
+                                    <i class="fas fa-eye"></i>
                                 </button>
-                                <span class="tooltiptext">Editar</span>
-                            </div>
-                            <div class="tooltip">
-                                <button class="btn-action btn-delete" onclick="deleteConversion(${actualIndex})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                                <span class="tooltiptext">Eliminar</span>
+                                <span class="tooltiptext">Ver detalles</span>
                             </div>
                         </div>
                     </td>
@@ -2092,40 +2017,75 @@
             });
         }
 
-        // Editar conversión
-        window.editConversion = function(index) {
-            editingIndex = index;
-            const conv = conversions[index];
+        // Ver detalles del movimiento
+        window.viewDetails = function(index) {
+            const movement = filteredMovements[index];
             
-            modalTitle.innerHTML = '<i class="fas fa-edit"></i> Editar Conversión';
-            document.getElementById('date').value = conv.date;
-            usdInput.value = conv.usd;
-            rateInput.value = conv.rate;
-            document.getElementById('representativeName').value = conv.representative;
-            document.getElementById('notes').value = conv.notes;
-            imagePreview.src = conv.imageData;
-            imagePreview.style.display = 'block';
-            updateConversion();
+            modalTitle.innerHTML = `<i class="fas fa-eye"></i> Detalles del Movimiento`;
+            
+            const typeLabels = {
+                'income': { text: 'Entrada', class: 'badge-income' },
+                'expense': { text: 'Gasto', class: 'badge-expense' },
+                'service': { text: 'Servicio', class: 'badge-service' }
+            };
+            
+            const categoryLabels = {
+                'alimentacion': 'Alimentación',
+                'transporte': 'Transporte',
+                'servicios': 'Servicios',
+                'equipos': 'Equipos',
+                'oficina': 'Oficina',
+                'otros': 'Otros',
+                'ventas': 'Ventas',
+                'subsidios': 'Subsidios',
+                'mantenimiento': 'Mantenimiento'
+            };
+            
+            movementDetails.innerHTML = `
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <p>${new Date(movement.date).toLocaleDateString('es-DO')}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <p><span class="badge ${typeLabels[movement.type].class}">${typeLabels[movement.type].text}</span></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Monto</label>
+                        <p>RD$ ${movement.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <p><span class="badge badge-category">${categoryLabels[movement.category] || movement.category}</span></p>
+                    </div>
+                    <div class="form-group full">
+                        <label>Descripción</label>
+                        <p>${movement.description}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Responsable</label>
+                        <p>${movement.responsible}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Registro</label>
+                        <p>${new Date().toLocaleDateString('es-DO')}</p>
+                    </div>
+                </div>
+            `;
+            
             modal.classList.add('active');
         };
 
-        // Eliminar conversión
-        window.deleteConversion = function(index) {
-            if (confirm('¿Estás seguro de que deseas eliminar esta conversión?')) {
-                conversions.splice(index, 1);
-                updateRepresentativesFilter();
-                applyFilters();
-            }
-        };
-
+        // Descargar PDF individual
         window.downloadPDF = function(index) {
-            const conv = conversions[index];
+            const movement = filteredMovements[index];
             const doc = `
                 <!DOCTYPE html>
                 <html lang="es">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Conversión ${conv.date}</title>
+                    <title>Movimiento ${movement.date}</title>
                     <style>
                         body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
                         .header { text-align: center; margin-bottom: 30px; }
@@ -2134,49 +2094,37 @@
                         .row { display: flex; justify-content: space-between; margin: 15px 0; padding: 10px 0; border-bottom: 1px solid #eee; }
                         .label { font-weight: bold; color: #555; }
                         .value { color: #333; }
-                        .image { margin: 20px 0; text-align: center; }
-                        .image img { max-width: 300px; border-radius: 8px; }
-                        .notes { margin-top: 20px; padding: 15px; background: #f9f9f9; border-left: 4px solid #ffc107; border-radius: 4px; }
                     </style>
                 </head>
                 <body>
                     <div class="header">
-                        <h1>Registro de Conversión</h1>
-                        <p>Fecha: ${new Date(conv.date).toLocaleDateString('es-DO')}</p>
+                        <h1>Registro de Movimiento</h1>
+                        <p>Fecha: ${new Date(movement.date).toLocaleDateString('es-DO')}</p>
                     </div>
                     <div class="content">
                         <div class="row">
                             <span class="label">Fecha:</span>
-                            <span class="value">${new Date(conv.date).toLocaleDateString('es-DO')}</span>
+                            <span class="value">${new Date(movement.date).toLocaleDateString('es-DO')}</span>
                         </div>
                         <div class="row">
-                            <span class="label">Cantidad USD:</span>
-                            <span class="value">$${conv.usd.toFixed(2)}</span>
+                            <span class="label">Tipo:</span>
+                            <span class="value">${movement.type}</span>
                         </div>
                         <div class="row">
-                            <span class="label">Tasa de Cambio:</span>
-                            <span class="value">${conv.rate.toFixed(2)}</span>
+                            <span class="label">Descripción:</span>
+                            <span class="value">${movement.description}</span>
                         </div>
                         <div class="row">
-                            <span class="label">Monto en RD$:</span>
-                            <span class="value">RD$ ${parseFloat(conv.pesos).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</span>
+                            <span class="label">Monto:</span>
+                            <span class="value">RD$ ${movement.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</span>
                         </div>
                         <div class="row">
-                            <span class="label">Representante:</span>
-                            <span class="value">${conv.representative}</span>
+                            <span class="label">Categoría:</span>
+                            <span class="value">${movement.category}</span>
                         </div>
                         <div class="row">
-                            <span class="label">Estado:</span>
-                            <span class="value">${conv.status}</span>
-                        </div>
-                        ${conv.notes ? `
-                        <div class="notes">
-                            <strong style="color: #ffc107;">Notas:</strong>
-                            <p>${conv.notes}</p>
-                        </div>
-                        ` : ''}
-                        <div class="image">
-                            <img src="${conv.imageData}" alt="Factura">
+                            <span class="label">Responsable:</span>
+                            <span class="value">${movement.responsible}</span>
                         </div>
                     </div>
                 </body>
@@ -2186,24 +2134,284 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `Conversión_${conv.date}.pdf`;
+            link.download = `Movimiento_${movement.date}.pdf`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
         };
 
+        // Aplicar filtros
+        function applyFilters() {
+            const dateFromValue = dateFrom.value;
+            const dateToValue = dateTo.value;
+            const typeValue = typeFilter.value;
+            const categoryValue = categoryFilter.value;
+            const userValue = userFilter.value;
+            
+            filteredMovements = movements.filter(movement => {
+                // Filtrar por fecha
+                if (dateFromValue && movement.date < dateFromValue) return false;
+                if (dateToValue && movement.date > dateToValue) return false;
+                
+                // Filtrar por tipo
+                if (typeValue && movement.type !== typeValue) return false;
+                
+                // Filtrar por categoría
+                if (categoryValue && movement.category !== categoryValue) return false;
+                
+                // Filtrar por usuario
+                if (userValue && movement.responsible.toLowerCase().indexOf(userValue.toLowerCase()) === -1) return false;
+                
+                return true;
+            });
+            
+            renderTable();
+            updateCharts();
+        }
+
+        btnApplyFilters.addEventListener('click', applyFilters);
+
+        // Limpiar filtros
+        btnClearFilters.addEventListener('click', () => {
+            dateFrom.value = '';
+            dateTo.value = '';
+            typeFilter.value = '';
+            categoryFilter.value = '';
+            userFilter.value = '';
+            filteredMovements = [...movements];
+            renderTable();
+            updateCharts();
+        });
+
+        // Inicializar gráficos con configuración responsive
+        function initializeCharts() {
+            // Configuración responsive para todos los gráficos
+            const responsiveConfig = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: window.innerWidth < 768 ? 'bottom' : 'top',
+                        labels: {
+                            boxWidth: window.innerWidth < 768 ? 12 : 15,
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            font: {
+                                size: window.innerWidth < 768 ? 9 : 11
+                            }
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            font: {
+                                size: window.innerWidth < 768 ? 9 : 11
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Gráfico de gastos por categoría
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            categoryChart = new Chart(categoryCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Oficina', 'Transporte', 'Servicios', 'Mantenimiento', 'Otros'],
+                    datasets: [{
+                        label: 'Gastos por Categoría (RD$)',
+                        data: [12500, 7200, 8500, 15000, 5000],
+                        backgroundColor: [
+                            'rgba(66, 165, 245, 0.7)',
+                            'rgba(171, 71, 188, 0.7)',
+                            'rgba(240, 98, 146, 0.7)',
+                            'rgba(255, 152, 0, 0.7)',
+                            'rgba(76, 175, 80, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(66, 165, 245, 1)',
+                            'rgba(171, 71, 188, 1)',
+                            'rgba(240, 98, 146, 1)',
+                            'rgba(255, 152, 0, 1)',
+                            'rgba(76, 175, 80, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    ...responsiveConfig,
+                    scales: {
+                        ...responsiveConfig.scales,
+                        y: {
+                            ...responsiveConfig.scales.y,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de movilidad del dinero
+            const moneyFlowCtx = document.getElementById('moneyFlowChart').getContext('2d');
+            moneyFlowChart = new Chart(moneyFlowCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1 Oct', '5 Oct', '10 Oct', '15 Oct', '20 Oct', '25 Oct', '30 Oct'],
+                    datasets: [
+                        {
+                            label: 'Entradas',
+                            data: [50000, 25000, 0, 75000, 0, 50000, 0],
+                            borderColor: 'rgba(76, 175, 80, 1)',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Gastos',
+                            data: [0, 12500, 8500, 0, 7200, 0, 15000],
+                            borderColor: 'rgba(244, 67, 54, 1)',
+                            backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    ...responsiveConfig,
+                    scales: {
+                        ...responsiveConfig.scales,
+                        y: {
+                            ...responsiveConfig.scales.y,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de distribución del dinero
+            const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+            distributionChart = new Chart(distributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Oficina', 'Transporte', 'Servicios', 'Mantenimiento', 'Otros'],
+                    datasets: [{
+                        data: [12500, 7200, 8500, 15000, 5000],
+                        backgroundColor: [
+                            'rgba(66, 165, 245, 0.7)',
+                            'rgba(171, 71, 188, 0.7)',
+                            'rgba(240, 98, 146, 0.7)',
+                            'rgba(255, 152, 0, 0.7)',
+                            'rgba(76, 175, 80, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(66, 165, 245, 1)',
+                            'rgba(171, 71, 188, 1)',
+                            'rgba(240, 98, 146, 1)',
+                            'rgba(255, 152, 0, 1)',
+                            'rgba(76, 175, 80, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    ...responsiveConfig,
+                    plugins: {
+                        ...responsiveConfig.plugins,
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: RD$ ${value.toLocaleString('es-DO')} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico mensual
+            const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+            monthlyChart = new Chart(monthlyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct'],
+                    datasets: [
+                        {
+                            label: 'Entradas',
+                            data: [120000, 150000, 180000, 140000, 160000, 190000, 170000, 200000, 180000, 125000],
+                            backgroundColor: 'rgba(76, 175, 80, 0.7)'
+                        },
+                        {
+                            label: 'Gastos',
+                            data: [80000, 90000, 110000, 95000, 100000, 120000, 105000, 130000, 115000, 124570],
+                            backgroundColor: 'rgba(244, 67, 54, 0.7)'
+                        }
+                    ]
+                },
+                options: {
+                    ...responsiveConfig,
+                    scales: {
+                        ...responsiveConfig.scales,
+                        x: {
+                            ...responsiveConfig.scales.x,
+                            stacked: false,
+                        },
+                        y: {
+                            ...responsiveConfig.scales.y,
+                            stacked: false,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Actualizar gráficos con datos filtrados
+        function updateCharts() {
+            // En una implementación real, aquí se actualizarían los gráficos con los datos filtrados
+            // Por simplicidad, en este ejemplo solo mostramos un mensaje
+            console.log('Actualizando gráficos con datos filtrados');
+        }
+
+        // Redimensionar gráficos cuando cambia el tamaño de la ventana
+        function handleResize() {
+            if (categoryChart) categoryChart.resize();
+            if (moneyFlowChart) moneyFlowChart.resize();
+            if (distributionChart) distributionChart.resize();
+            if (monthlyChart) monthlyChart.resize();
+        }
+
+        // Imprimir todo
         btnPrintAll.addEventListener('click', () => {
-            if (filteredConversions.length === 0) {
-                alert('No hay conversiones para imprimir');
+            if (filteredMovements.length === 0) {
+                alert('No hay movimientos para imprimir');
                 return;
             }
             printFullHistory();
         });
 
+        // Descargar PDF de todo
         btnPdfAll.addEventListener('click', () => {
-            if (filteredConversions.length === 0) {
-                alert('No hay conversiones para descargar');
+            if (filteredMovements.length === 0) {
+                alert('No hay movimientos para descargar');
+                return;
+            }
+            downloadFullHistoryPDF();
+        });
+
+        // Exportar todo
+        btnExportAll.addEventListener('click', () => {
+            if (filteredMovements.length === 0) {
+                alert('No hay movimientos para exportar');
                 return;
             }
             downloadFullHistoryPDF();
@@ -2219,34 +2427,50 @@
                     th { background: #2196f3; color: white; padding: 12px; text-align: left; }
                     td { padding: 10px; border-bottom: 1px solid #ddd; }
                     tr:nth-child(even) { background: #f9f9f9; }
-                    .image { max-width: 80px; }
+                    .total { margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; text-align: right; font-weight: bold; }
                 </style>
                 </head><body>
-                <h1>Historial Completo de Conversiones</h1>
+                <h1>Historial Completo de Movimientos</h1>
                 <p>Fecha de impresión: ${new Date().toLocaleDateString('es-DO')}</p>
                 <table>
                 <tr>
                     <th>Fecha</th>
-                    <th>USD</th>
-                    <th>Tasa</th>
-                    <th>RD$</th>
-                    <th>Representante</th>
-                    <th>Estado</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th>Monto</th>
+                    <th>Categoría</th>
+                    <th>Responsable</th>
                 </tr>
             `;
-            filteredConversions.forEach(conv => {
+            
+            let totalIncome = 0;
+            let totalExpenses = 0;
+            
+            filteredMovements.forEach(movement => {
+                if (movement.type === 'income') {
+                    totalIncome += movement.amount;
+                } else {
+                    totalExpenses += movement.amount;
+                }
+                
                 tableHTML += `
                 <tr>
-                    <td>${new Date(conv.date).toLocaleDateString('es-DO')}</td>
-                    <td>$${conv.usd.toFixed(2)}</td>
-                    <td>${conv.rate.toFixed(2)}</td>
-                    <td>RD$ ${parseFloat(conv.pesos).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
-                    <td>${conv.representative}</td>
-                    <td>${conv.status}</td>
+                    <td>${new Date(movement.date).toLocaleDateString('es-DO')}</td>
+                    <td>${movement.type}</td>
+                    <td>${movement.description}</td>
+                    <td>RD$ ${movement.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+                    <td>${movement.category}</td>
+                    <td>${movement.responsible}</td>
                 </tr>
                 `;
             });
-            tableHTML += `</table></body></html>`;
+            
+            tableHTML += `</table>
+                <div class="total">Total Entradas: RD$ ${totalIncome.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</div>
+                <div class="total">Total Gastos: RD$ ${totalExpenses.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</div>
+                <div class="total">Balance: RD$ ${(totalIncome - totalExpenses).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</div>
+            </body></html>`;
+            
             const printWindow = window.open('', '_blank');
             printWindow.document.write(tableHTML);
             printWindow.document.close();
@@ -2259,7 +2483,7 @@
                 <html lang="es">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Historial de Conversiones</title>
+                    <title>Historial de Movimientos</title>
                     <style>
                         body { font-family: Arial, sans-serif; margin: 30px; color: #333; }
                         .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #2196f3; padding-bottom: 20px; }
@@ -2269,80 +2493,67 @@
                         th { background: #2196f3; color: white; padding: 12px; text-align: left; font-weight: bold; }
                         td { padding: 12px; border-bottom: 1px solid #ddd; }
                         tr:nth-child(even) { background: #f9f9f9; }
-                        .total { margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; }
-                        .total-row { display: flex; justify-content: space-between; margin: 5px 0; }
+                        .total { margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; text-align: right; font-weight: bold; }
                     </style>
                 </head>
                 <body>
                     <div class="header">
-                        <h1>Historial Completo de Conversiones</h1>
+                        <h1>Historial Completo de Movimientos</h1>
                         <p>Generado: ${new Date().toLocaleDateString('es-DO')} ${new Date().toLocaleTimeString('es-DO')}</p>
-                        <p>Total de registros: ${filteredConversions.length}</p>
+                        <p>Total de registros: ${filteredMovements.length}</p>
                     </div>
                     <table>
                         <tr>
                             <th>Fecha</th>
-                            <th>USD</th>
-                            <th>Tasa</th>
-                            <th>RD$</th>
-                            <th>Representante</th>
-                            <th>Estado</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Monto</th>
+                            <th>Categoría</th>
+                            <th>Responsable</th>
                         </tr>
             `;
-            let totalUSD = 0;
-            let totalPesos = 0;
-            filteredConversions.forEach(conv => {
-                totalUSD += conv.usd;
-                totalPesos += parseFloat(conv.pesos);
+            
+            let totalIncome = 0;
+            let totalExpenses = 0;
+            
+            filteredMovements.forEach(movement => {
+                if (movement.type === 'income') {
+                    totalIncome += movement.amount;
+                } else {
+                    totalExpenses += movement.amount;
+                }
+                
                 tableHTML += `
                         <tr>
-                            <td>${new Date(conv.date).toLocaleDateString('es-DO')}</td>
-                            <td>$${conv.usd.toFixed(2)}</td>
-                            <td>${conv.rate.toFixed(2)}</td>
-                            <td>RD$ ${parseFloat(conv.pesos).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
-                            <td>${conv.representative}</td>
-                            <td>${conv.status}</td>
+                            <td>${new Date(movement.date).toLocaleDateString('es-DO')}</td>
+                            <td>${movement.type}</td>
+                            <td>${movement.description}</td>
+                            <td>RD$ ${movement.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+                            <td>${movement.category}</td>
+                            <td>${movement.responsible}</td>
                         </tr>
                 `;
             });
+            
             tableHTML += `
                     </table>
-                    <div class="total">
-                        <div class="total-row">
-                            <strong>Total USD:</strong>
-                            <strong>$${totalUSD.toFixed(2)}</strong>
-                        </div>
-                        <div class="total-row">
-                            <strong>Total RD$:</strong>
-                            <strong>RD$ ${totalPesos.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</strong>
-                        </div>
-                    </div>
+                    <div class="total">Total Entradas: RD$ ${totalIncome.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</div>
+                    <div class="total">Total Gastos: RD$ ${totalExpenses.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</div>
+                    <div class="total">Balance: RD$ ${(totalIncome - totalExpenses).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</div>
                 </body>
                 </html>
             `;
+            
             const blob = new Blob([tableHTML], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `Historial_Conversiones_${new Date().toISOString().split('T')[0]}.pdf`;
+            link.download = `Historial_Movimientos_${new Date().toISOString().split('T')[0]}.pdf`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
         }
-
-        // Aplicar filtros
-        btnApplyFilters.addEventListener('click', applyFilters);
-
-        // Limpiar filtros
-        btnClearFilters.addEventListener('click', () => {
-            dateFrom.value = '';
-            dateTo.value = '';
-            representativeFilter.value = '';
-            filteredConversions = [...conversions];
-            updateStatistics();
-            renderTable();
-        });
 
         // Event listeners para el menú móvil
         menuToggle.addEventListener('click', toggleSidebar);
@@ -2351,8 +2562,11 @@
         // Inicializar cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', function() {
             initializeModules();
-            updateStatistics();
+            initializeCharts();
             renderTable();
+            
+            // Agregar listener para redimensionamiento
+            window.addEventListener('resize', handleResize);
         });
 
         // Manejar redimensionamiento de ventana
@@ -2362,6 +2576,9 @@
                 sidebarOverlay.classList.remove('active');
                 mainContent.classList.remove('expanded');
             }
+            
+            // Redimensionar gráficos
+            handleResize();
         });
     </script>
 </body>
