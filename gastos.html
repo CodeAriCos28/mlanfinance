@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Gastos - AgroSystem</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+ <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #fce4ec 100%);
+            min-height: 100vh;
+            display: flex;
+            color: #37474f;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 15% 85%, rgba(66, 165, 245, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 15%, rgba(171, 71, 188, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(240, 98, 146, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* BARRA LATERAL - ESTRUCTURA MEJORADA */
+        .sidebar-left {
+            width: 280px;
+            background: linear-gradient(180deg, #035087 0%, #011b5c 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1002;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .sidebar-header h2 {
+            color: white;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 3px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .header-icon {
+            font-size: 32px;
+            color: #fff9c4;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            position: relative;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: rgba(255, 255, 255, 0.8);
+            padding-left: 30px;
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-left-color: white;
+        }
+
+        .menu-item i {
+            font-size: 1.3rem;
+            margin-right: 15px;
+            width: 25px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .menu-item:hover i,
+        .menu-item.active i {
+            opacity: 1;
+        }
+
+        .menu-item span {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* MENÚ HAMBURGUESA - MEJORADO */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1003;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: #ee5a24;
+            transform: scale(1.05);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-container {
+            flex: 1;
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #fce4ec 100%);
+        }
+
+        .main-container.expanded {
+            margin-left: 0;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* HEADER */
+        .page-header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(33, 150, 243, 0.12);
+            border: 1px solid rgba(66, 165, 245, 0.2);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #42a5f5 0%, #ab47bc 50%, #f06292 100%);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .page-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            color: #37474f;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-icon-action {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .btn-icon-action.print {
+            background: linear-gradient(135deg, rgba(102, 187, 106, 0.2) 0%, rgba(76, 175, 80, 0.2) 100%);
+            color: #2e7d32;
+            border: 1px solid #66bb6a;
+        }
+
+        .btn-icon-action.print:hover {
+            background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-icon-action.pdf {
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.2) 0%, rgba(229, 57, 53, 0.2) 100%);
+            color: #c62828;
+            border: 1px solid #ef5350;
+        }
+
+        .btn-icon-action.pdf:hover {
+            background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        /* TOOLTIP */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: auto;
+            background-color: #37474f;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px 12px;
+            position: absolute;
+            z-index: 1200;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #37474f transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .page-subtitle {
+            color: #78909c;
+            font-size: 15px;
+            margin-top: 8px;
+        }
+
+        /* DASHBOARD CARDS MEJORADAS */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card-balance{
+            background: rgba(33, 150, 243, 0.12);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
+            border: 1px solid rgba(66, 165, 245, 0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-spent  {
+            background: rgba(252, 48, 48, 0.195);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
+            border: 1px solid rgba(66, 165, 245, 0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-available{
+            background:rgba(59, 253, 45, 0.101) ;
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
+            border: 1px solid rgba(66, 165, 245, 0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+       
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(33, 150, 243, 0.18);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            opacity: 0.1;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: scale(1.1) rotate(5deg);
+            opacity: 0.15;
+        }
+
+        .card-available::before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234caf50'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
+        }
+
+        .card-spent::before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f44336'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
+        }
+
+        .card-balance::before {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232196f3'%3E%3Cpath d='M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z'/%3E%3C/svg%3E");
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+            display: block;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-available .card-icon {
+            color: #4caf50;
+            background: rgba(33, 150, 243, 0.12);
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.2) 100%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+        }
+
+        .card-spent .card-icon {
+            color: #f44336;
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(244, 67, 54, 0.2) 100%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
+        }
+
+        .card-balance .card-icon {
+            color: #2196f3;
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(33, 150, 243, 0.2) 100%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: #78909c;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #37474f;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* FILTROS */
+        .filters-panel {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
+            border: 1px solid rgba(66, 165, 245, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .filters-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #37474f;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filters-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #37474f;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        input[type="date"],
+        select {
+            font-size: 14px;
+            padding: 12px 16px;
+            border: 2px solid rgba(66, 165, 245, 0.3);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            background: rgba(227, 242, 253, 0.3);
+            color: #37474f;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #42a5f5;
+            box-shadow: 0 0 0 4px rgba(66, 165, 245, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .filters-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-apply {
+            background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(66, 165, 245, 0.35);
+        }
+
+        .btn-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 165, 245, 0.45);
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, rgba(240, 98, 146, 0.2) 0%, rgba(233, 30, 99, 0.2) 100%);
+            color: #c2185b;
+            border: 1px solid #f06292;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-clear:hover {
+            background: linear-gradient(135deg, #f06292 0%, #e91e63 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 98, 146, 0.3);
+        }
+
+        /* TABLA */
+        .table-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(33, 150, 243, 0.12);
+            border: 1px solid rgba(66, 165, 245, 0.2);
+            overflow-x: auto;
+        }
+
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .controls-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(66, 165, 245, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 165, 245, 0.45);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
+        }
+
+        thead th {
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            white-space: nowrap;
+        }
+
+        thead th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        thead th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(227, 242, 253, 0.3);
+        }
+
+        tbody tr:hover {
+            background: linear-gradient(135deg, rgba(66, 165, 245, 0.08) 0%, rgba(171, 71, 188, 0.08) 100%);
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(66, 165, 245, 0.15);
+        }
+
+        tbody td {
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(66, 165, 245, 0.1);
+            font-size: 14px;
+            color: #37474f;
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 12px;
+        }
+
+        tbody tr:last-child td:last-child {
+            border-radius: 0 0 12px 0;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .badge-category {
+            background: linear-gradient(135deg, rgba(255, 183, 77, 0.2) 0%, rgba(255, 138, 101, 0.2) 100%);
+            color: #f57c00;
+            border: 1px solid #ffb74d;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.2) 0%, rgba(30, 136, 229, 0.2) 100%);
+            color: #1565c0;
+            border: 1px solid #42a5f5;
+        }
+
+        .btn-download:hover {
+            background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 165, 245, 0.3);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, rgba(255, 183, 77, 0.2) 0%, rgba(255, 138, 101, 0.2) 100%);
+            color: #f57c00;
+            border: 1px solid #ffb74d;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #ffb74d 0%, #ff8a65 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 138, 101, 0.3);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, rgba(240, 98, 146, 0.2) 0%, rgba(233, 30, 99, 0.2) 100%);
+            color: #c2185b;
+            border: 1px solid #f06292;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #f06292 0%, #e91e63 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 98, 146, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #78909c;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #90a4ae;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            color: #546e7a;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(66, 165, 245, 0.2);
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #42a5f5 0%, #ab47bc 50%, #f06292 100%);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            font-size: 26px;
+            color: #37474f;
+            font-weight: 700;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #78909c;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-close:hover {
+            background: rgba(240, 98, 146, 0.1);
+            color: #f06292;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label .required {
+            color: #f06292;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        textarea,
+        select {
+            font-size: 14px;
+            padding: 12px 16px;
+            border: 2px solid rgba(66, 165, 245, 0.3);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            background: rgba(227, 242, 253, 0.3);
+            color: #37474f;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #42a5f5;
+            box-shadow: 0 0 0 4px rgba(66, 165, 245, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(66, 165, 245, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 165, 245, 0.45);
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, rgba(240, 98, 146, 0.2) 0%, rgba(233, 30, 99, 0.2) 100%);
+            color: #c2185b;
+            border: 1px solid #f06292;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-cancel:hover {
+            background: linear-gradient(135deg, #f06292 0%, #e91e63 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 98, 146, 0.3);
+        }
+
+        /* Custom scrollbar */
+        .sidebar-left::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-left::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-left::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .sidebar-left::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* MODAL PARA DESCRIPCIÓN COMPLETA */
+        .description-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .description-modal.active {
+            display: flex;
+        }
+
+        .description-modal-content {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(66, 165, 245, 0.2);
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        .description-modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #42a5f5 0%, #ab47bc 50%, #f06292 100%);
+        }
+
+        .description-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .description-modal-header h3 {
+            font-size: 20px;
+            color: #37474f;
+            font-weight: 700;
+        }
+
+        .description-modal-body {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #37474f;
+            max-height: 50vh;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .description-modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #78909c;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .description-modal-close:hover {
+            background: rgba(240, 98, 146, 0.1);
+            color: #f06292;
+        }
+
+        .read-more-btn {
+            background: none;
+            border: none;
+            color: #42a5f5;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 4px;
+            padding: 0;
+            text-decoration: underline;
+        }
+
+        .read-more-btn:hover {
+            color: #1e88e5;
+        }
+
+        /* Desktop specific styles */
+        @media (min-width: 993px) {
+            .sidebar-left {
+                position: fixed;
+                transform: translateX(0);
+                height: 100vh;
+            }
+
+            .main-container {
+                margin-left: 280px;
+                min-height: 100vh;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 992px) {
+            .sidebar-left {
+                transform: translateX(-100%);
+                width: 100%;
+                max-width: 300px;
+                height: 100vh;
+            }
+
+            .sidebar-left.mobile-open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+                opacity: 1;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .main-container {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .main-container.expanded {
+                margin-left: 0;
+            }
+
+            .page-header {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .page-header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .filters-panel {
+                padding: 20px;
+            }
+
+            .filters-form {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-actions {
+                flex-direction: column;
+            }
+
+            .table-container {
+                padding: 15px;
+            }
+
+            .controls-bar {
+                flex-direction: column;
+                margin-bottom: 20px;
+            }
+
+            .controls-right {
+                width: 100%;
+                flex-direction: column;
+                order: -1;
+            }
+
+            .btn-add {
+                width: 100%;
+                justify-content: center;
+                padding: 14px 16px;
+                font-size: 14px;
+                z-index: 100;
+                position: relative;
+            }
+
+            .btn-add:active {
+                transform: scale(0.98);
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            thead th {
+                padding: 12px 8px;
+                font-size: 11px;
+            }
+
+            tbody td {
+                padding: 12px 8px;
+                font-size: 12px;
+            }
+
+            /* MODAL RESPONSIVE */
+            .modal-content {
+                padding: 20px;
+                width: 95%;
+                max-height: 95vh;
+            }
+
+            .modal-header h2 {
+                font-size: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .btn-submit, .btn-cancel {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .description-modal-content {
+                padding: 20px;
+                width: 95%;
+                max-height: 80vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 18px;
+                gap: 8px;
+            }
+
+            .btn-add {
+                font-size: 12px;
+                padding: 10px 16px;
+            }
+
+            .header-actions {
+                gap: 8px;
+            }
+
+            .btn-icon-action {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            thead th {
+                padding: 10px 6px;
+                font-size: 10px;
+            }
+
+            tbody td {
+                padding: 10px 6px;
+                font-size: 11px;
+            }
+
+            .btn-action {
+                width: 28px;
+                height: 28px;
+                font-size: 11px;
+            }
+
+            .badge {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Menu Toggle Button -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class='bx bx-menu'></i>
+    </button>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- BARRA LATERAL MEJORADA -->
+    <aside class="sidebar-left" id="sidebarLeft">
+        <div class="sidebar-header">
+            <h2>
+                <i class="fas fa-calculator"></i>
+                MLAN FINANCE
+            </h2>
+            <p>Usuario: Carmen García</p>
+            <p>carmen@agrosystem.com</p>
+        </div>
+
+        <div class="sidebar-menu">
+            <!-- Menú para todos los usuarios -->
+            <a href="#" class="menu-item">
+                <i class='fas fa-home'></i>
+                <span>Inicio</span>
+            </a>
+            <a href="convertidor.html" class="menu-item">
+                <i class='fas fa-exchange-alt'></i>
+                <span>Conversiones</span>
+            </a>
+            <a href="gastos.html" class="menu-item active">
+                <i class='fas fa-wallet'></i>
+                <span> Gestion Gastos</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class='fas fa-credit-card'></i>
+                <span>Pago Servicios</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class='fas fa-chart-line'></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- Cerrar sesión para todos -->
+            <a href="#" class="menu-item">
+                <i class='bx bx-log-out'></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <p>AMLAN FINANCE V 0.0.0</p>
+        </div>
+    </aside>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="main-container" id="mainContent">
+        <div class="content">
+            <!-- HEADER -->
+            <div class="page-header">
+                <div class="page-header-top">
+                    <div>
+                        <h1>
+                            <i class="fas fa-wallet"></i>
+                            Gestión de Gastos
+                        </h1>
+                        <p class="page-subtitle">Controla y visualiza todos los gastos registrados</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="tooltip">
+                            <button class="btn-icon-action print" id="btnPrintAll" title="Imprimir Todo">
+                                <i class="fas fa-print"></i>
+                            </button>
+                            <span class="tooltiptext">Imprimir todo el historial</span>
+                        </div>
+                        <div class="tooltip">
+                            <button class="btn-icon-action pdf" id="btnPdfAll" title="Descargar PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </button>
+                            <span class="tooltiptext">Descargar PDF del historial</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DASHBOARD CARDS -->
+                <div class="dashboard-cards">
+                    <div class="card card-available">
+                        <i class="fas fa-wallet card-icon"></i>
+                        <div class="card-title">Total Disponible</div>
+                        <div class="card-value">RD$ 125,430.00</div>
+                    </div>
+                    <div class="card card-spent">
+                        <i class="fas fa-credit-card card-icon"></i>
+                        <div class="card-title">Total Gastado</div>
+                        <div class="card-value">RD$ 45,670.50</div>
+                    </div>
+                    <div class="card card-balance">
+                        <i class="fas fa-chart-line card-icon"></i>
+                        <div class="card-title">Balance Restante</div>
+                        <div class="card-value">RD$ 79,759.50</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTROS -->
+            <div class="filters-panel">
+                <h3 class="filters-title">
+                    <i class="fas fa-filter"></i>
+                    Filtros de Búsqueda
+                </h3>
+                <div class="filters-form">
+                    <div class="form-group">
+                        <label for="dateFrom">
+                            <i class="fas fa-calendar-alt"></i>
+                            Fecha Desde
+                        </label>
+                        <input type="date" id="dateFrom" name="dateFrom">
+                    </div>
+                    <div class="form-group">
+                        <label for="dateTo">
+                            <i class="fas fa-calendar-alt"></i>
+                            Fecha Hasta
+                        </label>
+                        <input type="date" id="dateTo" name="dateTo">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryFilter">
+                            <i class="fas fa-tags"></i>
+                            Categoría
+                        </label>
+                        <select id="categoryFilter" name="categoryFilter">
+                            <option value="">Todas las categorías</option>
+                            <option value="alimentacion">Alimentación</option>
+                            <option value="transporte">Transporte</option>
+                            <option value="servicios">Servicios</option>
+                            <option value="equipos">Equipos</option>
+                            <option value="oficina">Oficina</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="filters-actions">
+                        <button class="btn-apply" id="btnApplyFilters">
+                            <i class="fas fa-check"></i>
+                            Aplicar
+                        </button>
+                        <button class="btn-clear" id="btnClearFilters">
+                            <i class="fas fa-times"></i>
+                            Limpiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLA -->
+            <div class="table-container">
+                <div class="controls-bar">
+                    <div class="controls-right">
+                        <button class="btn-add" id="btnAdd">
+                            <i class="fas fa-plus"></i>
+                            <span>Agregar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="emptyState" style="display: none;">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>Sin gastos registrados</h3>
+                        <p>Comienza agregando tu primer gasto</p>
+                    </div>
+                </div>
+
+                <table id="expensesTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Descripción</th>
+                            <th>Monto</th>
+                            <th>Categoría</th>
+                            <th>Registrado Por</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Los registros se cargarán dinámicamente aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA CREAR/EDITAR GASTO -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">
+                    <i class="fas fa-plus-circle"></i> Nuevo Gasto
+                </h2>
+                <button class="btn-close" id="btnClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="expenseForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="date">
+                            <i class="fas fa-calendar-alt"></i>
+                            Fecha del Gasto <span class="required">*</span>
+                        </label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">Monto (RD$) <span class="required">*</span></label>
+                        <input type="number" id="amount" name="amount" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Categoría <span class="required">*</span></label>
+                        <select id="category" name="category" required>
+                            <option value="">Selecciona una categoría</option>
+                            <option value="alimentacion">Alimentación</option>
+                            <option value="transporte">Transporte</option>
+                            <option value="servicios">Servicios</option>
+                            <option value="equipos">Equipos</option>
+                            <option value="oficina">Oficina</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registrar">Registrado Por <span class="required">*</span></label>
+                        <input type="text" id="registrar" name="registrar" placeholder="Nombre de quien registra" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="description">
+                            <i class="fas fa-align-left"></i>
+                            Descripción Detallada <span class="required">*</span>
+                        </label>
+                        <textarea id="description" name="description" placeholder="Describe detalladamente el gasto realizado..." required></textarea>
+                    </div>
+
+
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Guardar Gasto</span>
+                    </button>
+                    <button type="button" class="btn-cancel" id="btnCancel">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Cancelar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PARA DESCRIPCIÓN COMPLETA -->
+    <div class="description-modal" id="descriptionModal">
+        <div class="description-modal-content">
+            <div class="description-modal-header">
+                <h3>Descripción Completa</h3>
+                <button class="description-modal-close" id="descriptionModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="description-modal-body" id="descriptionModalBody">
+                <!-- El contenido de la descripción se cargará aquí -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+// Datos de ejemplo para demostración
+let expenses = [
+    {
+        id: 1,
+        date: '2023-10-15',
+        description: 'Compra de materiales de oficina',
+        amount: 12500.00,
+        category: 'oficina',
+        registrar: 'Carmen García',
+     
+    },
+    {
+        id: 2,
+        date: '2023-10-18',
+        description: 'Pago de servicios eléctricos',
+        amount: 8500.75,
+        category: 'servicios',
+        registrar: 'Juan Pérez',
+    
+    },
+    {
+        id: 3,
+        date: '2023-10-20',
+        description: 'Combustible para vehículos',
+        amount: 7200.50,
+        category: 'transporte',
+        registrar: 'María Rodríguez',
+       
+    },
+    {
+        id: 4,
+        date: '2023-10-22',
+        description: 'Almuerzo de equipo',
+        amount: 4500.00,
+        category: 'alimentacion',
+        registrar: 'Carlos López',
+    
+    },
+    {
+        id: 5,
+        date: '2023-10-25',
+        description: 'Compra de computadora',
+        amount: 32500.00,
+        category: 'equipos',
+        registrar: 'Ana Martínez',
+    }
+];
+
+let editingIndex = null;
+let filteredExpenses = [...expenses];
+
+// Ordenar los gastos por fecha (más recientes primero)
+function sortExpenses() {
+    expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+    filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+// Elementos del DOM
+const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modalTitle');
+const btnAdd = document.getElementById('btnAdd');
+const btnClose = document.getElementById('btnClose');
+const btnCancel = document.getElementById('btnCancel');
+const btnPrintAll = document.getElementById('btnPrintAll');
+const btnPdfAll = document.getElementById('btnPdfAll');
+const btnApplyFilters = document.getElementById('btnApplyFilters');
+const btnClearFilters = document.getElementById('btnClearFilters');
+const form = document.getElementById('expenseForm');
+const tableBody = document.getElementById('tableBody');
+const emptyState = document.getElementById('emptyState');
+const dateFrom = document.getElementById('dateFrom');
+const dateTo = document.getElementById('dateTo');
+const categoryFilter = document.getElementById('categoryFilter');
+const menuToggle = document.getElementById('menuToggle');
+const sidebarLeft = document.getElementById('sidebarLeft');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const mainContent = document.getElementById('mainContent');
+const descriptionModal = document.getElementById('descriptionModal');
+const descriptionModalClose = document.getElementById('descriptionModalClose');
+const descriptionModalBody = document.getElementById('descriptionModalBody');
+
+// Función para mostrar/ocultar sidebar
+function toggleSidebar() {
+    sidebarLeft.classList.toggle('mobile-open');
+    sidebarOverlay.classList.toggle('active');
+    mainContent.classList.toggle('expanded');
+}
+
+// Inicializar módulos
+function initializeModules() {
+    const menuItems = document.querySelectorAll('.menu-item');
+    
+    menuItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remover clase active de todos los items
+            menuItems.forEach(i => i.classList.remove('active'));
+            
+            // Agregar clase active al item seleccionado
+            this.classList.add('active');
+            
+            // Obtener el texto del módulo para logging
+            const moduleName = this.querySelector('span').textContent;
+            console.log('Cambiando a módulo:', moduleName);
+            
+            // Cerrar menú en móviles después de seleccionar
+            if (window.innerWidth <= 992) {
+                toggleSidebar();
+            }
+        });
+    });
+}
+
+// Abrir modal para nuevo gasto
+btnAdd.addEventListener('click', () => {
+    console.log('Botón agregar clickeado');
+    editingIndex = null;
+    modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Nuevo Gasto';
+    form.reset();
+    
+    // Establecer fecha actual
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    document.getElementById('date').value = `${year}-${month}-${day}`;
+    
+    modal.classList.add('active');
+});
+
+// Cerrar modal
+function closeModal() {
+    console.log('Cerrando modal');
+    modal.classList.remove('active');
+    form.reset();
+}
+
+btnClose.addEventListener('click', closeModal);
+btnCancel.addEventListener('click', closeModal);
+
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+});
+
+// Guardar gasto - CORREGIDO
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    console.log('Formulario enviado');
+    
+    // Obtener valores del formulario
+    const date = document.getElementById('date').value;
+    const description = document.getElementById('description').value.trim();
+    const amount = parseFloat(document.getElementById('amount').value);
+    const category = document.getElementById('category').value;
+    const registrar = document.getElementById('registrar').value.trim();
+    
+    console.log('Datos del formulario:', { date, description, amount, category, registrar });
+    
+    // Validar formulario
+    if (!date || !description || !amount || !category || !registrar) {
+        alert('Por favor complete todos los campos obligatorios');
+        return;
+    }
+    
+    if (isNaN(amount) || amount <= 0) {
+        alert('Por favor ingrese un monto válido');
+        return;
+    }
+    
+    const formData = {
+        id: editingIndex !== null ? expenses[editingIndex].id : expenses.length + 1,
+        date: date,
+        description: description,
+        amount: amount,
+        category: category,
+        registrar: registrar,
+    };
+
+    console.log('Datos a guardar:', formData);
+
+    if (editingIndex !== null) {
+        // Editar gasto existente
+        expenses[editingIndex] = formData;
+        console.log('Gasto editado:', editingIndex);
+    } else {
+        // Agregar nuevo gasto
+        expenses.push(formData);
+        console.log('Nuevo gasto agregado. Total gastos:', expenses.length);
+    }
+
+    // Ordenar los gastos por fecha (más recientes primero)
+    sortExpenses();
+    
+    applyFilters();
+    closeModal();
+});
+
+// Función para truncar texto y agregar botón de ver más/menos
+function truncateText(text, maxLength) {
+    if (text.length <= maxLength) return text;
+    
+    const truncated = text.substring(0, maxLength);
+    
+    return `
+        <span class="description-container">
+            <span class="truncated-text">${truncated}</span>
+            <button class="read-more-btn" onclick="showFullDescription('${text.replace(/'/g, "\\'")}')">... más</button>
+        </span>
+    `;
+}
+
+// Función para mostrar la descripción completa en un modal
+function showFullDescription(text) {
+    descriptionModalBody.textContent = text;
+    descriptionModal.classList.add('active');
+}
+
+// Cerrar modal de descripción
+descriptionModalClose.addEventListener('click', () => {
+    descriptionModal.classList.remove('active');
+});
+
+descriptionModal.addEventListener('click', (e) => {
+    if (e.target === descriptionModal) {
+        descriptionModal.classList.remove('active');
+    }
+});
+
+// Renderizar tabla
+function renderTable() {
+    console.log('Renderizando tabla con', filteredExpenses.length, 'gastos');
+    tableBody.innerHTML = '';
+
+    if (filteredExpenses.length === 0) {
+        document.getElementById('expensesTable').style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+    }
+
+    document.getElementById('expensesTable').style.display = 'table';
+    emptyState.style.display = 'none';
+
+    filteredExpenses.forEach((expense, index) => {
+        const actualIndex = expenses.findIndex(e => e.id === expense.id);
+        const row = document.createElement('tr');
+        
+        // Formatear categoría para mostrar
+        const categoryLabels = {
+            'alimentacion': 'Alimentación',
+            'transporte': 'Transporte',
+            'servicios': 'Servicios',
+            'equipos': 'Equipos',
+            'oficina': 'Oficina',
+            'otros': 'Otros'
+        };
+        
+        row.innerHTML = `
+            <td>${new Date(expense.date).toLocaleDateString('es-DO')}</td>
+            <td>${truncateText(expense.description, 20)}</td>
+            <td>RD$ ${expense.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+            <td><span class="badge badge-category">${categoryLabels[expense.category] || expense.category}</span></td>
+            <td>${expense.registrar}</td>
+            <td>
+                <div class="actions">
+                    <div class="tooltip">
+                        <button class="btn-action btn-download" onclick="downloadPDF(${actualIndex})">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <span class="tooltiptext">Descargar PDF</span>
+                    </div>
+                    <div class="tooltip">
+                        <button class="btn-action btn-edit" onclick="editExpense(${actualIndex})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <span class="tooltiptext">Editar</span>
+                    </div>
+                    <div class="tooltip">
+                        <button class="btn-action btn-delete" onclick="deleteExpense(${actualIndex})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <span class="tooltiptext">Eliminar</span>
+                    </div>
+                </div>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// Editar gasto
+window.editExpense = function(index) {
+    console.log('Editando gasto:', index);
+    editingIndex = index;
+    const expense = expenses[index];
+    
+    modalTitle.innerHTML = '<i class="fas fa-edit"></i> Editar Gasto';
+    document.getElementById('date').value = expense.date;
+    document.getElementById('description').value = expense.description;
+    document.getElementById('amount').value = expense.amount;
+    document.getElementById('category').value = expense.category;
+    document.getElementById('registrar').value = expense.registrar;
+    modal.classList.add('active');
+};
+
+// Eliminar gasto
+window.deleteExpense = function(index) {
+    if (confirm('¿Estás seguro de que deseas eliminar este gasto?')) {
+        console.log('Eliminando gasto:', index);
+        expenses.splice(index, 1);
+        applyFilters();
+    }
+};
+
+// Descargar PDF individual
+window.downloadPDF = function(index) {
+    const expense = expenses[index];
+    const doc = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <title>Gasto ${expense.date}</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .header h1 { color: #2196f3; margin: 0; }
+                .content { border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+                .row { display: flex; justify-content: space-between; margin: 15px 0; padding: 10px 0; border-bottom: 1px solid #eee; }
+                .label { font-weight: bold; color: #555; }
+                .value { color: #333; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Registro de Gasto</h1>
+                <p>Fecha: ${new Date(expense.date).toLocaleDateString('es-DO')}</p>
+            </div>
+            <div class="content">
+                <div class="row">
+                    <span class="label">Fecha:</span>
+                    <span class="value">${new Date(expense.date).toLocaleDateString('es-DO')}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Descripción:</span>
+                    <span class="value">${expense.description}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Monto:</span>
+                    <span class="value">RD$ ${expense.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Categoría:</span>
+                    <span class="value">${expense.category}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Registrado por:</span>
+                    <span class="value">${expense.registrar}</span>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+    const blob = new Blob([doc], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Gasto_${expense.date}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+};
+
+// Aplicar filtros
+function applyFilters() {
+    console.log('Aplicando filtros');
+    const dateFromValue = dateFrom.value;
+    const dateToValue = dateTo.value;
+    const categoryValue = categoryFilter.value;
+    
+    filteredExpenses = expenses.filter(expense => {
+        // Filtrar por fecha
+        if (dateFromValue && expense.date < dateFromValue) return false;
+        if (dateToValue && expense.date > dateToValue) return false;
+        
+        // Filtrar por categoría
+        if (categoryValue && expense.category !== categoryValue) return false;
+        
+        return true;
+    });
+    
+    renderTable();
+}
+
+btnApplyFilters.addEventListener('click', applyFilters);
+
+// Limpiar filtros
+btnClearFilters.addEventListener('click', () => {
+    dateFrom.value = '';
+    dateTo.value = '';
+    categoryFilter.value = '';
+    filteredExpenses = [...expenses];
+    renderTable();
+});
+
+// Imprimir todo
+btnPrintAll.addEventListener('click', () => {
+    if (filteredExpenses.length === 0) {
+        alert('No hay gastos para imprimir');
+        return;
+    }
+    printFullHistory();
+});
+
+// Descargar PDF de todo
+btnPdfAll.addEventListener('click', () => {
+    if (filteredExpenses.length === 0) {
+        alert('No hay gastos para descargar');
+        return;
+    }
+    downloadFullHistoryPDF();
+});
+
+function printFullHistory() {
+    let tableHTML = `
+        <html><head>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #2196f3; text-align: center; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th { background: #2196f3; color: white; padding: 12px; text-align: left; }
+            td { padding: 10px; border-bottom: 1px solid #ddd; }
+            tr:nth-child(even) { background: #f9f9f9; }
+            .total { margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; text-align: right; font-weight: bold; }
+        </style>
+        </head><body>
+        <h1>Historial Completo de Gastos</h1>
+        <p>Fecha de impresión: ${new Date().toLocaleDateString('es-DO')}</p>
+        <table>
+        <tr>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Monto</th>
+            <th>Categoría</th>
+            <th>Registrado Por</th>
+        </tr>
+    `;
+    
+    let total = 0;
+    filteredExpenses.forEach(expense => {
+        total += expense.amount;
+        tableHTML += `
+        <tr>
+            <td>${new Date(expense.date).toLocaleDateString('es-DO')}</td>
+            <td>${expense.description}</td>
+            <td>RD$ ${expense.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+            <td>${expense.category}</td>
+            <td>${expense.registrar}</td>
+        </tr>
+        `;
+    });
+    
+    tableHTML += `</table>
+        <div class="total">Total: RD$ ${total.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</div>
+    </body></html>`;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(tableHTML);
+    printWindow.document.close();
+    printWindow.print();
+}
+
+function downloadFullHistoryPDF() {
+    let tableHTML = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <title>Historial de Gastos</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 30px; color: #333; }
+                .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #2196f3; padding-bottom: 20px; }
+                .header h1 { color: #2196f3; margin: 0; font-size: 28px; }
+                .header p { margin: 5px 0; color: #666; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th { background: #2196f3; color: white; padding: 12px; text-align: left; font-weight: bold; }
+                td { padding: 12px; border-bottom: 1px solid #ddd; }
+                tr:nth-child(even) { background: #f9f9f9; }
+                .total { margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; text-align: right; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Historial Completo de Gastos</h1>
+                <p>Generado: ${new Date().toLocaleDateString('es-DO')} ${new Date().toLocaleTimeString('es-DO')}</p>
+                <p>Total de registros: ${filteredExpenses.length}</p>
+            </div>
+            <table>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Monto</th>
+                    <th>Categoría</th>
+                    <th>Registrado Por</th>
+                </tr>
+    `;
+    
+    let total = 0;
+    filteredExpenses.forEach(expense => {
+        total += expense.amount;
+        tableHTML += `
+                <tr>
+                    <td>${new Date(expense.date).toLocaleDateString('es-DO')}</td>
+                    <td>${expense.description}</td>
+                    <td>RD$ ${expense.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+                    <td>${expense.category}</td>
+                    <td>${expense.registrar}</td>
+                </tr>
+        `;
+    });
+    
+    tableHTML += `
+            </table>
+            <div class="total">Total: RD$ ${total.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</div>
+        </body>
+        </html>
+    `;
+    
+    const blob = new Blob([tableHTML], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Historial_Gastos_${new Date().toISOString().split('T')[0]}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// Event listeners para el menú móvil
+menuToggle.addEventListener('click', toggleSidebar);
+sidebarOverlay.addEventListener('click', toggleSidebar);
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, inicializando...');
+    initializeModules();
+    
+    // Ordenar los gastos por fecha (más recientes primero)
+    sortExpenses();
+    
+    renderTable();
+    
+    // Verificar que los elementos existen
+    console.log('btnAdd existe:', !!btnAdd);
+    console.log('form existe:', !!form);
+    console.log('modal existe:', !!modal);
+});
+
+// Manejar redimensionamiento de ventana
+window.addEventListener('resize', function() {
+    if (window.innerWidth > 992) {
+        sidebarLeft.classList.remove('mobile-open');
+        sidebarOverlay.classList.remove('active');
+        mainContent.classList.remove('expanded');
+    }
+});
+    </script>
+</body>
+</html>

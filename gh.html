@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Conversión de Moneda - Carmen</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #fce4ec 100%);
+            min-height: 100vh;
+            display: flex;
+            color: #37474f;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 15% 85%, rgba(66, 165, 245, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 15%, rgba(171, 71, 188, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(240, 98, 146, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* BARRA LATERAL */
+        .sidebar-left {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(66, 165, 245, 0.2);
+            padding: 0;
+            box-shadow: 4px 0 24px rgba(33, 150, 243, 0.1);
+            overflow-y: auto;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 999;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
+            padding: 32px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            animation: pulse 6s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .sidebar-header h2 {
+            color: white;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* MENÚ HAMBURGUESA */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 0;
+            z-index: 1001;
+            background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 0 10px 10px 0;
+            cursor: pointer;
+            box-shadow: 2px 0 5px rgba(66, 165, 245, 0.4);
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .menu-toggle:hover {
+            width: 50px;
+            box-shadow: 2px 0 20px rgba(66, 165, 245, 0.5);
+        }
+
+        .menu-toggle:active {
+            width: 43px;
+        }
+
+        .hamburger {
+            position: relative;
+            width: 20px;
+            height: 14px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-left: 12px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 100%;
+            height: 2.5px;
+            background: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+
+        .menu-toggle.active .hamburger span:nth-child(1) {
+            transform: translateY(5.75px) rotate(45deg);
+        }
+
+        .menu-toggle.active .hamburger span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .menu-toggle.active .hamburger span:nth-child(3) {
+            transform: translateY(-5.75px) rotate(-45deg);
+        }
+
+        /* OVERLAY */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(93, 64, 55, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+        }
+
+        .header-icon {
+            font-size: 32px;
+            color: #fff9c4;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .user-info {
+            background: linear-gradient(135deg, rgba(66, 165, 245, 0.08) 0%, rgba(171, 71, 188, 0.08) 100%);
+            padding: 28px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(66, 165, 245, 0.15);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #42a5f5 0%, #ab47bc 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 32px;
+            color: white;
+            box-shadow: 0 8px 24px rgba(66, 165, 245, 0.35);
+            border: 4px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .user-name {
+            color: #37474f;
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .user-role {
+            color: #78909c;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        .modules-list {
+            padding: 28px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .module-item {
+            background: transparent;
+            border: none;
+            padding: 16px 24px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #8d6e63;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            overflow: hidden;
+            margin: 0 12px;
+            border-radius: 14px;
+        }
+
+        .module-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #ffb74d 0%, #ff8a65 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .module-item:hover {
+            background: linear-gradient(135deg, rgba(255, 183, 77, 0.12) 0%, rgba(255, 138, 101, 0.12) 100%);
+            color: #5d4037;
+            transform: translateX(6px);
+        }
+
+        .module-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .module-item.active {
+            background: linear-gradient(135deg, #ffb74d 0%, #ff8a65 100%);
+            color: white;
+            font-weight: 700;
+            transform: translateX(6px);
+            box-shadow: 0 6px 20px rgba(255, 138, 101, 0.25);
+        }
+
+        .module-item.active::before {
+            transform: scaleY(1);
+            background: #fff3e0;
+        }
+
+        .module-icon {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .module-item.active .module-icon {
+            color: #fff3e0;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-container {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 5;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 950px;
+        }
+
+        /* FORMULARIO */
+        .form-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 45px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(33, 150, 243, 0.12);
+            border: 1px solid rgba(66, 165, 245, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #42a5f5 0%, #ab47bc 50%, #f06292 100%);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .form-container h1 {
+            font-size: 38px;
+            color: #37474f;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .form-subtitle {
+            text-align: center;
+            color: #78909c;
+            font-size: 15px;
+            margin-bottom: 36px;
+            font-weight: 500;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-section:nth-child(2) { animation-delay: 0.1s; }
+        .form-section:nth-child(3) { animation-delay: 0.2s; }
+        .form-section:nth-child(4) { animation-delay: 0.3s; }
+        .form-section:nth-child(5) { animation-delay: 0.4s; }
+
+        .section-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: #37474f;
+            margin-bottom: 22px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(66, 165, 245, 0.2);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #42a5f5 0%, #ab47bc 100%);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #37474f;
+            margin-bottom: 9px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        label .required {
+            color: #f06292;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="date"],
+        textarea {
+            font-size: 15px;
+            padding: 13px 16px;
+            border: 2px solid rgba(66, 165, 245, 0.3);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: rgba(227, 242, 253, 0.3);
+            color: #37474f;
+        }
+
+        input[type="date"] {
+            cursor: pointer;
+            position: relative;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #90a4ae;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #42a5f5;
+            box-shadow: 0 0 0 4px rgba(66, 165, 245, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .currency-display {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ab47bc;
+            padding: 22px;
+            background: linear-gradient(135deg, rgba(66, 165, 245, 0.12) 0%, rgba(171, 71, 188, 0.12) 100%);
+            border: 2px solid #ab47bc;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(171, 71, 188, 0.2);
+            backdrop-filter: blur(10px);
+            letter-spacing: -0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .currency-display:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 26px rgba(171, 71, 188, 0.25);
+        }
+
+        .image-upload-box {
+            border: 3px dashed #42a5f5;
+            border-radius: 16px;
+            padding: 45px 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background: linear-gradient(135deg, rgba(66, 165, 245, 0.08) 0%, rgba(171, 71, 188, 0.08) 100%);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-upload-box::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(66, 165, 245, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .image-upload-box:hover {
+            background: linear-gradient(135deg, rgba(66, 165, 245, 0.15) 0%, rgba(171, 71, 188, 0.15) 100%);
+            border-color: #ab47bc;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(66, 165, 245, 0.2);
+        }
+
+        .image-upload-box input[type="file"] {
+            display: none;
+        }
+
+        .image-upload-text {
+            font-size: 16px;
+            color: #37474f;
+            margin-bottom: 10px;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+
+        .upload-icon {
+            font-size: 50px;
+            color: #42a5f5;
+            margin-bottom: 14px;
+            display: block;
+            position: relative;
+            z-index: 2;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .image-preview {
+            margin-top: 22px;
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(33, 150, 243, 0.15);
+            border: 3px solid rgba(66, 165, 245, 0.3);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            font-size: 14px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 180px;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+            color: white;
+            box-shadow: 
+                0 6px 20px rgba(66, 165, 245, 0.35),
+                0 2px 6px rgba(66, 165, 245, 0.2);
+            border: 2px solid transparent;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #1e88e5 0%, #1976d2 100%);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 26px rgba(66, 165, 245, 0.45),
+                0 3px 10px rgba(66, 165, 245, 0.3);
+        }
+
+        .btn-submit:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .btn-submit .btn-icon {
+            font-size: 16px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .btn-reset {
+            background: rgba(255, 255, 255, 0.95);
+            color: #ab47bc;
+            border: 2px solid #ab47bc;
+            box-shadow: 
+                0 3px 10px rgba(171, 71, 188, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-reset:hover {
+            background: linear-gradient(135deg, rgba(171, 71, 188, 0.08) 0%, rgba(171, 71, 188, 0.12) 100%);
+            color: #8e24aa;
+            border-color: #8e24aa;
+            transform: translateY(-2px);
+            box-shadow: 
+                0 5px 16px rgba(171, 71, 188, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-reset:active {
+            transform: translateY(0);
+        }
+
+        .btn-reset .btn-icon {
+            font-size: 16px;
+        }
+
+        /* Efecto de resplandor en hover para submit */
+        .btn-submit::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+        }
+
+        .btn-submit:hover::after {
+            animation: shimmerButton 1.5s infinite;
+        }
+
+        @keyframes shimmerButton {
+            0% {
+                left: -150%;
+            }
+            100% {
+                left: 150%;
+            }
+        }
+
+        /* Estados de loading y disabled */
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        button:disabled:hover {
+            transform: none !important;
+            box-shadow: 
+                0 6px 20px rgba(66, 165, 245, 0.35),
+                0 2px 6px rgba(66, 165, 245, 0.2);
+        }
+
+        .form-message {
+            padding: 20px 24px;
+            border-radius: 14px;
+            margin-bottom: 28px;
+            font-size: 15px;
+            display: none;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-message.success {
+            background: linear-gradient(135deg, rgba(102, 187, 106, 0.15) 0%, rgba(76, 175, 80, 0.15) 100%);
+            color: #2e7d32;
+            border: 2px solid #66bb6a;
+            display: block;
+        }
+
+        .form-message.error {
+            background: linear-gradient(135deg, rgba(240, 98, 146, 0.15) 0%, rgba(233, 30, 99, 0.15) 100%);
+            color: #c2185b;
+            border: 2px solid #f06292;
+            display: block;
+        }
+
+        .error-text {
+            font-size: 13px;
+            color: #f06292;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .sidebar-left {
+                width: 260px;
+            }
+
+            .main-container {
+                margin-left: 260px;
+                padding: 30px;
+            }
+
+            .form-container {
+                padding: 40px 35px;
+            }
+
+            .form-container h1 {
+                font-size: 38px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar-left {
+                width: 240px;
+            }
+
+            .main-container {
+                margin-left: 240px;
+                padding: 25px;
+            }
+
+            .form-container {
+                padding: 35px 30px;
+            }
+
+            .form-container h1 {
+                font-size: 36px;
+            }
+
+            .form-grid {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .sidebar-overlay {
+                display: block;
+            }
+
+            .sidebar-left {
+                width: 280px;
+                position: fixed;
+                left: -280px;
+                top: 0;
+                bottom: 0;
+                transition: left 0.3s ease;
+                box-shadow: 4px 0 30px rgba(121, 85, 72, 0.15);
+                z-index: 999;
+            }
+
+            .sidebar-left.active {
+                left: 0;
+                box-shadow: 8px 0 40px rgba(121, 85, 72, 0.25);
+            }
+
+            .main-container {
+                margin-left: 0;
+                padding: 60px 20px 20px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .form-container {
+                padding: 30px 24px;
+                border-radius: 20px;
+            }
+
+            .form-container h1 {
+                font-size: 32px;
+                margin-bottom: 10px;
+            }
+
+            .form-subtitle {
+                font-size: 15px;
+                margin-bottom: 32px;
+            }
+
+            .section-title {
+                font-size: 18px;
+                margin-bottom: 20px;
+            }
+
+            .currency-display {
+                font-size: 28px;
+                padding: 22px;
+            }
+
+            .image-upload-box {
+                padding: 40px 25px;
+            }
+
+            .upload-icon {
+                font-size: 48px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            button {
+                width: 100%;
+                min-width: 100%;
+                padding: 15px 28px;
+                font-size: 14px;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="number"],
+            input[type="date"],
+            textarea {
+                padding: 14px 16px;
+                font-size: 15px;
+            }
+
+            label {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .menu-toggle {
+                width: 42px;
+                height: 42px;
+            }
+
+            .menu-toggle:hover {
+                width: 47px;
+            }
+
+            .hamburger {
+                width: 18px;
+                height: 13px;
+                margin-left: 11px;
+            }
+
+            .hamburger span {
+                height: 2.5px;
+            }
+
+            .menu-toggle.active .hamburger span:nth-child(1) {
+                transform: translateY(5.25px) rotate(45deg);
+            }
+
+            .menu-toggle.active .hamburger span:nth-child(3) {
+                transform: translateY(-5.25px) rotate(-45deg);
+            }
+
+            .sidebar-left {
+                width: 260px;
+                left: -260px;
+                z-index: 999;
+            }
+
+            .main-container {
+                padding: 60px 15px 15px 15px;
+            }
+
+            .sidebar-header {
+                padding: 24px 15px;
+            }
+
+            .sidebar-header h2 {
+                font-size: 22px;
+            }
+
+            .user-info {
+                padding: 20px 15px;
+            }
+
+            .user-avatar {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+
+            .user-name {
+                font-size: 17px;
+            }
+
+            .modules-list {
+                padding: 20px 10px;
+            }
+
+            .module-item {
+                padding: 14px 20px;
+                font-size: 14px;
+                margin: 2px 8px;
+            }
+
+            .form-container {
+                padding: 24px 18px;
+                border-radius: 18px;
+            }
+
+            .form-container h1 {
+                font-size: 28px;
+            }
+
+            .form-subtitle {
+                font-size: 14px;
+                margin-bottom: 28px;
+            }
+
+            .section-title {
+                font-size: 17px;
+                margin-bottom: 18px;
+            }
+
+            .currency-display {
+                font-size: 24px;
+                padding: 20px;
+            }
+
+            .image-upload-box {
+                padding: 35px 20px;
+            }
+
+            .upload-icon {
+                font-size: 44px;
+                margin-bottom: 12px;
+            }
+
+            .image-upload-text {
+                font-size: 15px;
+            }
+
+            button {
+                padding: 14px 24px;
+                font-size: 13px;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="number"],
+            input[type="date"],
+            textarea {
+                padding: 13px 15px;
+                font-size: 14px;
+            }
+
+            label {
+                font-size: 13px;
+                margin-bottom: 8px;
+            }
+
+            .form-section {
+                margin-bottom: 32px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .menu-toggle {
+                width: 40px;
+                height: 40px;
+            }
+
+            .menu-toggle:hover {
+                width: 45px;
+            }
+
+            .hamburger {
+                width: 17px;
+                height: 12px;
+                margin-left: 10px;
+            }
+
+            .hamburger span {
+                height: 2px;
+            }
+
+            .menu-toggle.active .hamburger span:nth-child(1) {
+                transform: translateY(5px) rotate(45deg);
+            }
+
+            .menu-toggle.active .hamburger span:nth-child(3) {
+                transform: translateY(-5px) rotate(-45deg);
+            }
+
+            .sidebar-left {
+                width: 240px;
+                left: -240px;
+                z-index: 999;
+            }
+
+            .main-container {
+                padding: 60px 12px 12px 12px;
+            }
+
+            .form-container {
+                padding: 20px 15px;
+            }
+
+            .form-container h1 {
+                font-size: 24px;
+            }
+
+            .form-subtitle {
+                font-size: 13px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .currency-display {
+                font-size: 22px;
+                padding: 18px;
+            }
+
+            .image-upload-box {
+                padding: 30px 15px;
+            }
+
+            button {
+                padding: 13px 22px;
+                font-size: 12px;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="number"],
+            input[type="date"],
+            textarea {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 183, 77, 0.1);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #ffb74d 0%, #ff8a65 100%);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #ff8a65 0%, #ffb74d 100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- BOTÓN HAMBURGUESA (solo visible en móvil) -->
+    <button class="menu-toggle" id="menuToggle">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <!-- OVERLAY (solo visible en móvil) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- BARRA LATERAL -->
+    <div class="sidebar-left" id="sidebar">
+        <div class="sidebar-header">
+            <h2>
+                <i class="fas fa-coins header-icon"></i>
+                Carmen
+            </h2>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-name">Sistema Financiero</div>
+            <div class="user-role">Administrador</div>
+        </div>
+
+        <div class="modules-list">
+            <div class="module-item active">
+                <i class="fas fa-exchange-alt module-icon"></i>
+                <span>Conversión de Moneda</span>
+            </div>
+            <div class="module-item">
+                <i class="fas fa-history module-icon"></i>
+                <span>Historial de Cambios</span>
+            </div>
+            <div class="module-item">
+                <i class="fas fa-chart-line module-icon"></i>
+                <span>Análisis de Facturas</span>
+            </div>
+            <div class="module-item">
+                <i class="fas fa-users module-icon"></i>
+                <span>Representantes</span>
+            </div>
+            <div class="module-item">
+                <i class="fas fa-file-alt module-icon"></i>
+                <span>Reportes</span>
+            </div>
+            <div class="module-item">
+                <i class="fas fa-cog module-icon"></i>
+                <span>Configuración</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="main-container">
+        <div class="content">
+            <div class="form-container">
+                <h1>💱 Conversión de Moneda</h1>
+                <p class="form-subtitle">Convierte dólares a pesos dominicanos de forma rápida y sencilla</p>
+
+                <div class="form-message" id="formMessage"></div>
+
+                <form id="currencyForm">
+                    <!-- CONVERSIÓN -->
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-dollar-sign"></i>
+                            Datos de Conversión
+                        </h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Fecha de Conversión <span class="required">*</span>
+                                </label>
+                                <input type="date" id="date" name="date" required>
+                                <div class="error-text" id="dateError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="usd">Cantidad en USD <span class="required">*</span></label>
+                                <input type="number" id="usd" name="usd" placeholder="0.00" step="0.01" min="0" required>
+                                <div class="error-text" id="usdError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="exchangeRate">Tasa de Cambio <span class="required">*</span></label>
+                                <input type="number" id="exchangeRate" name="exchangeRate" placeholder="58.50" step="0.01" min="0" required>
+                                <div class="error-text" id="exchangeRateError"></div>
+                            </div>
+                            <div class="form-group full">
+                                <label for="pesos">Monto en Pesos Dominicanos</label>
+                                <div class="currency-display" id="pesos">RD$ 0.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FACTURA -->
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-camera"></i>
+                            Foto de Factura
+                        </h2>
+                        <div class="form-group full">
+                            <div class="image-upload-box" id="uploadBox">
+                                <input type="file" id="imageUpload" name="image" accept=".jpg,.jpeg,.png,.gif" required>
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <div class="image-upload-text">
+                                    Arrastra tu imagen aquí o haz clic para seleccionar
+                                </div>
+                                <small style="color: #8d6e63; font-size: 13px; position: relative; z-index: 2;">JPG, PNG, GIF • Máximo 5MB</small>
+                            </div>
+                            <img id="imagePreview" class="image-preview" style="display: none;">
+                            <div class="error-text" id="imageError"></div>
+                        </div>
+                    </div>
+
+                    <!-- REPRESENTANTE -->
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-user-tie"></i>
+                            Información del Representante
+                        </h2>
+                        <div class="form-grid">
+                            <div class="form-group full">
+                                <label for="representativeName">Nombre del Representante <span class="required">*</span></label>
+                                <input type="text" id="representativeName" name="representativeName" placeholder="Ingresa el nombre completo" required>
+                                <div class="error-text" id="nameError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                                <input type="email" id="email" name="email" placeholder="correo@ejemplo.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone"><i class="fas fa-phone"></i> Teléfono</label>
+                                <input type="tel" id="phone" name="phone" placeholder="+1 (829) 000-0000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NOTAS -->
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-sticky-note"></i>
+                            Notas Adicionales
+                        </h2>
+                        <div class="form-group full">
+                            <label for="notes">Comentarios</label>
+                            <textarea id="notes" name="notes" placeholder="Agrega cualquier nota relevante sobre esta conversión..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- BOTONES -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-check-circle btn-icon"></i> 
+                            <span>Guardar Conversión</span>
+                        </button>
+                        <button type="reset" class="btn-reset">
+                            <i class="fas fa-redo btn-icon"></i> 
+                            <span>Limpiar Formulario</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('currencyForm');
+        const usdInput = document.getElementById('usd');
+        const rateInput = document.getElementById('exchangeRate');
+        const dateInput = document.getElementById('date');
+        const pesosDisplay = document.getElementById('pesos');
+        const imageUpload = document.getElementById('imageUpload');
+        const uploadBox = document.getElementById('uploadBox');
+        const imagePreview = document.getElementById('imagePreview');
+        const formMessage = document.getElementById('formMessage');
+
+        // Establecer fecha actual automáticamente
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        dateInput.value = `${year}-${month}-${day}`;
+
+        function updateConversion() {
+            const usd = parseFloat(usdInput.value) || 0;
+            const rate = parseFloat(rateInput.value) || 0;
+            const pesos = (usd * rate).toFixed(2);
+            pesosDisplay.textContent = `RD$ ${parseFloat(pesos).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        uploadBox.addEventListener('click', () => imageUpload.click());
+
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.style.borderColor = '#ab47bc';
+            uploadBox.style.background = 'linear-gradient(135deg, rgba(66, 165, 245, 0.15) 0%, rgba(171, 71, 188, 0.15) 100%)';
+        });
+
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.style.borderColor = '#42a5f5';
+            uploadBox.style.background = 'linear-gradient(135deg, rgba(66, 165, 245, 0.08) 0%, rgba(171, 71, 188, 0.08) 100%)';
+        });
+
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                imageUpload.files = files;
+                handleImageUpload();
+            }
+        });
+
+        imageUpload.addEventListener('change', handleImageUpload);
+
+        function handleImageUpload() {
+            const file = imageUpload.files[0];
+            const errorEl = document.getElementById('imageError');
+            errorEl.textContent = '';
+
+            if (!file) {
+                imagePreview.style.display = 'none';
+                return;
+            }
+
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                errorEl.textContent = '❌ Solo se permiten archivos JPG, PNG o GIF';
+                imageUpload.value = '';
+                imagePreview.style.display = 'none';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                errorEl.textContent = '❌ El archivo no debe superar 5MB';
+                imageUpload.value = '';
+                imagePreview.style.display = 'none';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        usdInput.addEventListener('input', updateConversion);
+        rateInput.addEventListener('input', updateConversion);
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            let isValid = true;
+            const errors = {
+                dateError: '',
+                usdError: '',
+                exchangeRateError: '',
+                nameError: '',
+                imageError: ''
+            };
+
+            const date = dateInput.value;
+            const usd = parseFloat(usdInput.value);
+            const rate = parseFloat(rateInput.value);
+            const name = document.getElementById('representativeName').value.trim();
+            const image = imageUpload.files.length > 0;
+
+            if (!date) {
+                errors.dateError = 'La fecha es obligatoria';
+                isValid = false;
+            }
+
+            if (!usd || usd <= 0) {
+                errors.usdError = 'Ingresa una cantidad válida';
+                isValid = false;
+            }
+
+            if (!rate || rate <= 0) {
+                errors.exchangeRateError = 'Ingresa una tasa válida';
+                isValid = false;
+            }
+
+            if (!name) {
+                errors.nameError = 'El nombre del representante es obligatorio';
+                isValid = false;
+            }
+
+            if (!image) {
+                errors.imageError = 'Debes cargar una imagen de la factura';
+                isValid = false;
+            }
+
+            Object.keys(errors).forEach(key => {
+                document.getElementById(key).textContent = errors[key];
+            });
+
+            if (!isValid) return;
+
+            const pesos = (usd * rate).toFixed(2);
+
+            formMessage.className = 'form-message success';
+            formMessage.textContent = `✅ Conversión guardada exitosamente: USD ${usd.toFixed(2)} = RD$ ${parseFloat(pesos).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+            console.log('Datos guardados:', {
+                fecha: date,
+                usd: usd,
+                tasa: rate,
+                pesos: pesos,
+                representante: name,
+                imagen: imageUpload.files[0].name
+            });
+
+            setTimeout(() => {
+                formMessage.style.display = 'none';
+            }, 6000);
+        });
+
+        form.addEventListener('reset', () => {
+            formMessage.style.display = 'none';
+            imagePreview.style.display = 'none';
+            Object.keys({dateError: '', usdError: '', exchangeRateError: '', nameError: '', imageError: ''}).forEach(key => {
+                document.getElementById(key).textContent = '';
+            });
+            // Restablecer fecha actual después del reset
+            setTimeout(() => {
+                dateInput.value = `${year}-${month}-${day}`;
+            }, 0);
+            updateConversion();
+        });
+
+        updateConversion();
+
+        document.querySelectorAll('.module-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.module-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Cerrar sidebar en móvil al seleccionar un módulo
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                }
+            });
+        });
+
+        // Funcionalidad del menú hamburguesa
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            menuToggle.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+
+        // Cerrar sidebar al presionar ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                menuToggle.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
